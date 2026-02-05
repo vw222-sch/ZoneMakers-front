@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { MapPinned } from "lucide-react";
 import { Link } from "react-router";
 
-export default function Login() {
+export default function Signup() {
     return (
         <div className='flex items-center justify-center h-screen px-4'>
             <div className='border-2 border-black w-md h-fit p-4 rounded-2xl items-center justify-center'>
@@ -20,14 +20,15 @@ export default function Login() {
                         <Input id="fieldgroup-username" placeholder="John Doe" className="max-md:text-sm" />
                     </Field>
                     <Field>
+                        <FieldLabel htmlFor="fieldgroup-email" className="text-base font-bold tracking-wide">E-mail</FieldLabel>
+                        <Input id="fieldgroup-email" type="email" placeholder="johndoe@example.com" className="max-md:text-sm" />
+                    </Field>
+                    <Field>
                         <FieldLabel htmlFor="fieldgroup-password" className="text-base font-bold tracking-wide">Password</FieldLabel>
                         <Input id="fieldgroup-password" type="password" placeholder="********" className="max-md:text-sm" />
                     </Field>
                     <Field orientation="horizontal" className="flex flex-col">
-                        <Button type="submit" className="w-full p-5 text-base font-bold tracking-wide cursor-pointer">Login</Button>
-                        <Link to="/signup" className="w-full">
-                            <Button variant={"outline"} className="w-full p-5 text-base font-bold tracking-wide cursor-pointer">Sign up</Button>
-                        </Link>
+                        <Button type="submit" className="w-full p-5 text-base font-bold tracking-wide cursor-pointer">Sign up</Button>
                     </Field>
                 </FieldGroup>
             </div>

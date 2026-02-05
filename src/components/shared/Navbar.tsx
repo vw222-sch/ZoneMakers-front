@@ -66,7 +66,7 @@ export default function Navbar() {
                             <SheetFooter>
                                 <Button type='submit' className="font-bold text-base">Login</Button>
                                 <SheetClose asChild>
-                                    <Button variant='outline' className="font-bold text-base">Register</Button>
+                                    <Button variant='outline' className="font-bold text-base">Sign up</Button>
                                 </SheetClose>
                             </SheetFooter>
                         </SheetContent>

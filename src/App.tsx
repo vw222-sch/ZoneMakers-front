@@ -3,6 +3,7 @@ import './App.css'
 import Home from './pages/Home';
 import Layout from './pages/Layout';
 import Login from './pages/Login';
+import Signup from './pages/Signup';
 
 export default function App() {
   return (
@@ -12,6 +13,7 @@ export default function App() {
       </Route>
 
       <Route path='login' element={<Login />} />
+      <Route path='signup' element={<Signup />} />
     </Routes>
   );
 }
