@@ -8,10 +8,12 @@ export default function Login() {
     return (
         <div className='flex items-center justify-center h-screen px-4'>
             <div className='border-2 border-black w-md h-fit p-4 rounded-2xl items-center justify-center'>
-                <h1 className="flex items-center gap-2 text-3xl justify-center font-extrabold mt-4 mb-8">
-                    <MapPinned size={50} />
-                    ZoneMakers
-                </h1>
+                <Link to="/">
+                    <h1 className="flex items-center gap-2 text-3xl justify-center font-extrabold mt-4 mb-8">
+                        <MapPinned size={50} />
+                        ZoneMakers
+                    </h1>
+                </Link>
                 <FieldGroup className="gap-6">
                     <Field>
                         <FieldLabel htmlFor="fieldgroup-username" className="text-base font-bold tracking-wide">Username</FieldLabel>
