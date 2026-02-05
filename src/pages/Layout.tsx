@@ -15,7 +15,7 @@ export default function Layout() {
                 </div>
 
                 <div className="relative flex-1 overflow-y-auto pt-18 pl-8">
-                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="hidden md:flex absolute top-4 left-4 p-2 opacity-60 hover:opacity-100 cursor-pointer">
+                    <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className={`transition-all duration-300 ease-in-out hidden md:flex fixed top-4 ${isSidebarOpen ? 'left-24' : 'left-4'} p-2 opacity-60 hover:opacity-100 cursor-pointer`}>
                         <PanelLeft size={25} />
                     </button>
 
