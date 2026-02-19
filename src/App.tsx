@@ -4,14 +4,14 @@ import Home from './pages/Home';
 import Layout from './pages/Layout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import UserDetails from './pages/UserDetails';
+import Support from './pages/Support';
 
 export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path='user-details' element={<UserDetails />} />
+        <Route path='support' element={<Support />} />
       </Route>
 
       <Route path='login' element={<Login />} />
