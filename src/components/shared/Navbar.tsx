@@ -1,4 +1,4 @@
-import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, MapPinHouse, PanelLeft } from "lucide-react";
+import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft } from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from "@/components/ui/button"
@@ -9,7 +9,6 @@ export default function Navbar() {
     const navItems = [
         { icon: Map, title: 'Map', href: '/map' },
         { icon: MessagesSquare, title: 'Chat', href: '/chat' },
-        { icon: MapPinHouse, title: 'Reserve', href: '/reserve' },
         { icon: CalendarDays, title: 'News', href: '/news' },
         { icon: MailWarning, title: 'Support', href: '/support' },
     ];
