@@ -1,4 +1,5 @@
 
+{/* 
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -36,6 +37,8 @@ async function verifyPasswordToken(
 }
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+*/}
 
 export async function signup(email: string, password: string) {
   /*const res = await fetch(`${API_URL}/auth/register`, {

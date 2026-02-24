@@ -3,6 +3,7 @@ import { Outlet } from "react-router";
 
 import Navbar from '@/components/shared/Navbar'
 import { PanelLeft } from 'lucide-react'
+import Footer from '@/components/shared/Footer';
 
 export default function Layout() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -20,6 +21,7 @@ export default function Layout() {
                     </button>
 
                     <Outlet />
+                    <Footer />
                 </div>
             </div>
         </>
