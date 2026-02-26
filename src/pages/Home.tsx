@@ -8,54 +8,51 @@ import { BadgeAlert, ShieldCheck, ArrowRight, Navigation } from 'lucide-react';
 export default function Home() {
   return (
     <>
-      <div className="container mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
-        <div className="grid items-center gap-16 lg:grid-cols-2">
-
-          <div className="mx-auto text-center lg:ml-0 lg:max-w-lg lg:text-left [&>p]:mx-auto [&>p]:max-w-xl">
+      <div className="flex items-center justify-center mx-auto px-4 sm:px-6 md:px-8 min-h-screen">
+        <div className="grid items-center gap-8 lg:grid-cols-2">
+          <div className="mx-auto text-center lg:text-left lg:max-w-lg">
             <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
               ZoneMakers - Your Safe Travel Companion
             </h1>
-            <p className="text-muted-foreground mt-8 text-lg/8">
+            <p className="text-muted-foreground mt-8 mb-12 text-xl/8 tracking-wide">
               Travel confidently with our platform that highlights safe zones and verified routes for a worry-free journey.
             </p>
 
-            <div className="grid gap-4 mt-12 sm:flex sm:justify-center lg:justify-start">
-              <Button className="flex flex-1 bg-primary text-primary-foreground font-bold tracking-wider hover:bg-primary/90">
-                Get Started <ArrowRight />
+            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
+              <Button className="text-base w-full md:w-fit flex flex-1 font-bold tracking-wider cursor-pointer py-5">
+                Get Started <ArrowRight className="w-5! h-5!" />
               </Button>
-              <Button variant="outline" className="flex flex-1 font-semibold tracking-wider">
-                Learn More <ArrowRight />
+              <Button variant="outline" className="text-base w-full md:w-fit flex flex-1 font-semibold tracking-wider cursor-pointer py-5">
+                Learn More <ArrowRight className="w-5! h-5!" />
               </Button>
             </div>
-            <div className="mt-12 flex items-center justify-center gap-8 sm:justify-start lg:justify-start">
-              <div className="text-center flex-1">
-                <div className="font-bold text-2xl">500k+</div>
-                <div className="text-sm text-muted-foreground">Active Users</div>
-              </div>
-              <div className="text-center flex-1">
-                <div className="font-bold text-2xl">1M+</div>
-                <div className="text-sm text-muted-foreground">Safe Trips Planned</div>
-              </div>
-              <div className="text-center flex-1">
-                <div className="font-bold text-2xl">150+</div>
-                <div className="text-sm text-muted-foreground">Cities Covered</div>
-              </div>
-            </div>
-          </div>
 
-          <div className='relative w-full overflow-hidden min-w-0 flex items-center justify-center'>
+            <div className="flex items-center justify-center gap-8 mt-16">
+              <div className="text-center flex-1">
+                <div className="font-bold text-3xl">500k+</div>
+                <div className="text-base text-muted-foreground">Active Users</div>
+              </div>
+              <div className="text-center flex-1">
+                <div className="font-bold text-3xl">1M+</div>
+                <div className="text-base text-muted-foreground">Safe Trips Planned</div>
+              </div>
+              <div className="text-center flex-1">
+                <div className="font-bold text-3xl">150+</div>
+                <div className="text-base text-muted-foreground">Cities Covered</div>
+              </div>
+            </div>
+
+          </div>
+          <div className='relative w-full overflow-hidden flex items-center justify-center'>
             <Globe></Globe>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-0">
-
-        {/* --- SECTION 1: FREEDOM (Emotional) - Floating & Gradient --- */}
-        <section className="pb-12 relative overflow-hidden">
-          <div className="mx-auto max-w-7xl px-6">
-
-            <div className="flex flex-col lg:flex-row gap-16 items-center min-h-screen">
+      <div className="flex flex-col gap-8">
+        <section className="relative overflow-hidden">
+          <div className="container mx-auto max-w-7xl px-4 sm:px-6 md:px-8">
+            <div className="flex flex-col lg:flex-row gap-16 items-center">
               {/* Szöveg - Minimalista, nagy tipográfia */}
               <div className="lg:w-1/2 relative z-10">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-sm font-semibold mb-6 border border-blue-100">

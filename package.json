@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@mapbox/mapbox-gl-draw": "^1.5.1",
     "@radix-ui/react-slot": "^1.2.4",
     "@tailwindcss/vite": "^4.1.18",
     "bcryptjs": "^3.0.3",
@@ -18,9 +19,11 @@
     "cobe": "^0.6.5",
     "jsonwebtoken": "^9.0.3",
     "lucide-react": "^0.563.0",
+    "mapbox-gl": "^3.19.0",
     "radix-ui": "^1.4.3",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-map-gl": "^8.1.0",
     "react-router": "^7.13.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
@@ -29,7 +32,10 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/bcryptjs": "^2.4.6",
+    "@types/geojson": "^7946.0.16",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/mapbox__mapbox-gl-draw": "^1.4.9",
+    "@types/mapbox-gl": "^3.4.1",
     "@types/node": "^24.10.9",
     "@types/react": "^19.2.5",
     "@types/react-dom": "^19.2.3",

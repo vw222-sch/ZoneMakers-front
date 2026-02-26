@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button"
 
 export default function UserDetails() {
     return (
-        <div className="bg-[url(/profile-bg.jpg)] bg-cover bg-center">
+        <div className="bg-[url(/profile-bg.jpg)] bg-cover bg-center min-h-screen">
             <div className="container mx-auto px-4 sm:px-8 h-fit max-w-7xl">
                 <div className="flex flex-col w-full gap-4 bg-linear-to-bl from-teal-500/75 to-emerald-500/75 rounded-4xl pb-4 shadow-2xl backdrop-blur-sm">
 
@@ -15,13 +15,13 @@ export default function UserDetails() {
                             <AvatarFallback>CN</AvatarFallback>
                         </Avatar>
 
-                        <div className="flex flex-col gap-2 z-10 text-white">
+                        <div className="flex flex-col gap-1 z-10 text-white">
                             <div className="flex items-center gap-2">
                                 <h1 className="font-extrabold text-4xl tracking-wide drop-shadow-md">John Doe</h1>
                                 <BadgeCheck size={30} className="text-white" />
                             </div>
                             <p className="font-semibold tracking-wider opacity-90">@johndoe</p>
-                            <div className="flex flex-wrap gap-2 mt-4">
+                            {/* <div className="flex flex-wrap gap-2 mt-4">
                                 <Button variant="secondary" className="p-5 font-bold border-2 text-sm rounded-4xl cursor-pointer hover:bg-white/90 shadow-lg transition-all">
                                     Follow
                                     <Plus className="w-4 h-4" />
@@ -30,12 +30,15 @@ export default function UserDetails() {
                                     Message
                                     <MessageCircle className="w-4 h-4" />
                                 </Button>
-                            </div>
+                            </div> */}
                         </div>
 
-                        <div className="hidden lg:flex flex-col items-end ml-auto self-start z-12 gap-4">
-                            <h1 className="text-xl font-bold text-white tracking-widest border-2 border-white/20 rounded-2xl bg-black/40 backdrop-blur-md p-2 w-fit">
+                        <div className="hidden lg:flex flex-col items-center ml-auto z-12 gap-4">
+                            <h1 className="text-xl font-bold text-white tracking-widest border-2 border-white/20 rounded-2xl bg-black/40 backdrop-blur-md p-2 w-full text-center -mb-2.5">
                                 Explorer Lvl. 12
+                            </h1>
+                            <h1 className="text-xl font-bold text-white tracking-widest border-2 border-white/20 rounded-2xl bg-black/40 backdrop-blur-md p-2 w-full text-center">
+                                Reputation: 850
                             </h1>
                             <div className="flex items-center gap-2">
                                 <div className="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center border-4 border-amber-300 shadow-lg group-hover:scale-110 transition-transform">
@@ -48,9 +51,6 @@ export default function UserDetails() {
                                     <MapPin className="text-emerald-600 w-8 h-8" />
                                 </div>
                             </div>
-                            <h1 className="text-lg font-bold text-white tracking-widest w-fit drop-shadow-sm">
-                                Reputation: 850
-                            </h1>
                         </div>
                     </div>
 
