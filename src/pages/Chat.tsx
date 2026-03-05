@@ -1,6 +1,7 @@
 import Map from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import VITE_MAPBOX_TOKEN from "../../credentials"
+import DACHMap from "@/DACHMap.tsx"
 
 import { useId } from 'react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
@@ -29,17 +30,7 @@ export default function Chat() {
   return (
     <div className='container mx-auto max-w-7xl px-8'>
       <div className='grid grid-cols-[400px] lg:grid-cols-[1fr_200px]'>
-        <Map
-          mapboxAccessToken={VITE_MAPBOX_TOKEN}
-          initialViewState={{
-            longitude: 19.6,
-            latitude: 55.9,
-            zoom: 3
-          }}
-          style={{ width: 1000, height: 600, borderRadius: "20px" }}
-          mapStyle="mapbox://styles/mapbox/streets-v9"
-        />
-
+        <DACHMap />
         <Select defaultValue='1'>
           <SelectTrigger
             id={id}
