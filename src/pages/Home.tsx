@@ -8,43 +8,43 @@ import { BadgeAlert, ShieldCheck, ArrowRight, Navigation } from 'lucide-react';
 export default function Home() {
   return (
     <>
-      <div className="flex items-center justify-center mx-auto px-4 sm:px-6 md:px-8 min-h-screen">
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <div className="mx-auto text-center lg:text-left lg:max-w-lg">
-            <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
-              ZoneMakers - Your Safe Travel Companion
-            </h1>
-            <p className="text-muted-foreground mt-8 mb-12 text-xl/8 tracking-wide">
-              Travel confidently with our platform that highlights safe zones and verified routes for a worry-free journey.
-            </p>
+      <div className="container mx-auto max-w-7xl px-4 flex flex-col mt-16 lg:mt-0 lg:flex-row flex-wrap items-center justify-center">
+        <div className="w-full lg:w-1/2 h-fit lg:min-h-screen flex items-start lg:items-center justify-start lg:justify-center flex-col gap-4 py-8 lg:py-0">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
+            ZoneMakers - Your Safe Travel Companion
+          </h1>
+          <p className="text-muted-foreground my-6 lg:my-8 text-lg sm:text-xl lg:text-2xl/8 tracking-wide">
+            Travel confidently with our platform that highlights safe zones and verified routes for a worry-free journey.
+          </p>
 
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4 mt-8">
-              <Button className="text-base w-full md:w-fit flex flex-1 font-bold tracking-wider cursor-pointer py-5">
-                Get Started <ArrowRight className="w-5! h-5!" />
-              </Button>
-              <Button variant="outline" className="text-base w-full md:w-fit flex flex-1 font-semibold tracking-wider cursor-pointer py-5">
-                Learn More <ArrowRight className="w-5! h-5!" />
-              </Button>
-            </div>
-
-            <div className="flex items-center justify-center gap-8 mt-16">
-              <div className="text-center flex-1">
-                <div className="font-bold text-3xl">500k+</div>
-                <div className="text-base text-muted-foreground">Active Users</div>
-              </div>
-              <div className="text-center flex-1">
-                <div className="font-bold text-3xl">1M+</div>
-                <div className="text-base text-muted-foreground">Safe Trips Planned</div>
-              </div>
-              <div className="text-center flex-1">
-                <div className="font-bold text-3xl">150+</div>
-                <div className="text-base text-muted-foreground">Cities Covered</div>
-              </div>
-            </div>
-
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full">
+            <Button className="text-lg w-full sm:flex-1 font-bold tracking-wider cursor-pointer py-6">
+              Get Started <ArrowRight className="w-5! h-5!" />
+            </Button>
+            <Button variant="outline" className="text-lg w-full sm:flex-1 font-semibold tracking-wider cursor-pointer py-6">
+              Learn More <ArrowRight className="w-5! h-5!" />
+            </Button>
           </div>
-          <div className='relative w-full overflow-hidden flex items-center justify-center'>
-            <Globe></Globe>
+
+          <div className="flex flex-col sm:flex-row flex-wrap items-center justify-center sm:justify-between gap-6 sm:gap-8 my-8 lg:my-12 w-full rounded-4xl border p-5 sm:p-6">
+            <div className="text-center flex-1 w-full sm:w-auto">
+              <div className="font-bold text-2xl sm:text-3xl">500k+</div>
+              <div className="text-sm sm:text-base text-muted-foreground">Active Users</div>
+            </div>
+            <div className="text-center flex-1 w-full sm:w-auto">
+              <div className="font-bold text-2xl sm:text-3xl">1M+</div>
+              <div className="text-sm sm:text-base text-muted-foreground">Safe Trips Planned</div>
+            </div>
+            <div className="text-center flex-1 w-full sm:w-auto">
+              <div className="font-bold text-2xl sm:text-3xl">150+</div>
+              <div className="text-sm sm:text-base text-muted-foreground">Cities Covered</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="w-full lg:w-1/2 flex items-center justify-center mt-8 lg:mt-0 pb-16 lg:pb-0">
+          <div className="relative w-full max-w-md lg:max-w-full overflow-hidden flex items-center justify-center">
+            <Globe />
           </div>
         </div>
       </div>
