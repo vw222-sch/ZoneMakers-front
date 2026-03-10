@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import { MapPinned, Compass, Radio, BookOpen, RadioTower } from 'lucide-react';
+import { MapPinned, Map, MessagesSquare, CalendarDays, MailWarning } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -18,26 +18,26 @@ export default function Footer() {
             <div className="flex flex-wrap justify-center items-center gap-2">
               <Button asChild className="text-white font-extrabold tracking-widest rounded-2xl">
                 <Link to="#">
-                  <Compass />
-                  Explore
+                  <Map />
+                  Map
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
                 <Link to="#">
-                  <Radio />
-                  Feed
+                  <MessagesSquare />
+                  Chat
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
                 <Link to="#">
-                  <BookOpen />
-                  Guides
+                  <CalendarDays />
+                  News
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
                 <Link to="#">
-                  <RadioTower />
-                  Live Report
+                  <MailWarning />
+                  Support
                 </Link>
               </Button>
             </div>
