@@ -14,8 +14,8 @@ import {
 export default function Support() {
     return (
         <>
-            <div className="container mx-auto max-w-7xl px-4">
-                <h1 className="text-5xl font-bold tracking-widest text-center mb-16">Support</h1>
+            <div className="container mx-auto max-w-6xl px-4 min-h-screen">
+                <h1 className="fl-text-4xl/6xl font-bold tracking-widest text-center my-16">Support</h1>
                 <FieldGroup className="gap-6">
                     <Field>
                         <FieldLabel className="text-base font-bold tracking-wide">Subject</FieldLabel>
