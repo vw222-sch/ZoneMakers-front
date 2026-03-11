@@ -1,6 +1,5 @@
 import { Map as M } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import VITE_MAPBOX_TOKEN from "../../credentials"
 
 export default function Map() {
     return (
@@ -22,7 +21,7 @@ export default function Map() {
                 </div>
             </div>
             <M
-                mapboxAccessToken={VITE_MAPBOX_TOKEN}
+                mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
                 initialViewState={{
                     longitude: 19.6,
                     latitude: 55.9,

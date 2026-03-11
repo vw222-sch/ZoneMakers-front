@@ -2,12 +2,10 @@ import { useState, useCallback, useRef } from "react";
 import Map, { Source, Layer, NavigationControl } from "react-map-gl/mapbox";
 import type { MapRef, LayerProps } from "react-map-gl/mapbox";
 import type { FeatureCollection } from "geojson";
-import "../credentials.ts"
 import "mapbox-gl/dist/mapbox-gl.css";
 
 import MY_GEOJSON from "./GALS.json"
 //import MY_GEOJSON from "../selected.json"
-import VITE_MAPBOX_TOKEN from "../credentials.ts";
 
 const fillLayer: LayerProps = {
   id: "regions-fill",
@@ -45,7 +43,7 @@ export default function GeoJSONMap() {
       onMove={(e) => setViewState(e.viewState)}
       style={{ width: "100vw", height: "100vh" }}
       mapStyle="mapbox://styles/mapbox/dark-v11"
-      mapboxAccessToken={VITE_MAPBOX_TOKEN}
+      mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
     >
       <NavigationControl position="bottom-right" />
 

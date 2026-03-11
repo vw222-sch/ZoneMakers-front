@@ -1,6 +1,5 @@
 import Map from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import VITE_MAPBOX_TOKEN from "../../credentials"
 import DACHMap from "@/DACHMap.tsx"
 
 import { useId } from 'react'
