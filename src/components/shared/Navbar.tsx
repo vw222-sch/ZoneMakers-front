@@ -1,9 +1,12 @@
-import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell} from "lucide-react";
-
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
-import { Button } from "@/components/ui/button"
 
 import { Link } from "react-router";
+import { useState } from 'react';
+
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Button } from "@/components/ui/button";
+
+import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell, UserIcon, SettingsIcon, LogOutIcon } from "lucide-react";
 
 export default function Navbar() {
     const navItems = [
@@ -12,6 +15,15 @@ export default function Navbar() {
         { icon: CalendarDays, title: 'News', href: '/news' },
         { icon: MailWarning, title: 'Support', href: '/support' },
     ];
+
+    const listItems = [
+        { icon: UserIcon, property: 'Profile' },
+        { icon: SettingsIcon, property: 'Settings' },
+        { icon: LogOutIcon, property: 'Sign Out' }
+    ];
+
+    // Simulate login logic
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
 
     return (
         <>
@@ -30,12 +42,41 @@ export default function Navbar() {
                     ))}
                 </div>
 
-                <Link to="/notifications" className="mt-8">
-                    <Bell size={35} />
-                </Link>
-                <Link to="/login" className="mt-8">
-                    <CircleUser size={35} />
-                </Link>
+                {isLoggedIn ? (
+                    <>
+                        <Link to="/notifications" className="mt-8">
+                            <Bell size={35} />
+                        </Link>
+
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant='secondary' size='icon' className='overflow-hidden rounded-full mt-6'>
+                                    <img src='https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png' alt='Hallie Richards' className="border-2" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className='w-56'>
+                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                                <DropdownMenuGroup>
+                                    {listItems.map((item, index) => (
+                                        <DropdownMenuItem
+                                            key={index}
+                                            onClick={() => {
+                                                if (item.property === 'Sign Out') setIsLoggedIn(false);
+                                            }}
+                                        >
+                                            <item.icon />
+                                            <span className='text-popover-foreground'>{item.property}</span>
+                                        </DropdownMenuItem>
+                                    ))}
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </>
+                ) : (
+                    <Link to="/login" className="mt-8">
+                        <CircleUser size={35} />
+                    </Link>
+                )}
             </nav>
 
             {/** Mobile view */}
@@ -66,7 +107,7 @@ export default function Navbar() {
                             </div>
 
                             <SheetFooter>
-                                <Button type='submit' className="font-bold text-base">Login</Button>
+                                <Button type='button' onClick={() => setIsLoggedIn(true)} className="font-bold text-base">Login</Button>
                                 <SheetClose asChild>
                                     <Button variant='outline' className="font-bold text-base">Sign up</Button>
                                 </SheetClose>
