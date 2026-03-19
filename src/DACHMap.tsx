@@ -9,19 +9,19 @@ import MY_GEOJSON from "./GALS.json";
 // ─── 1. Define your region colours ───────────────────────────────────────────
 // Keys must match the `name` property in your GeoJSON features.
 const REGION_COLORS: Record<string, string> = {
-  "Region A": "#4cc9f0",
-  "Region B": "#f72585",
-  "Region C": "#7209b7",
-  "Region D": "#3a86ff",
-  "Region E": "#fb5607",
-  "Region F": "#fb5607",
-  "Region G": "#fb5607",
-  "Region H": "#fb5607",
-  "Region I": "#fb5607",
-  "Region J": "#fb5607",
-  "Region K": "#fb5607",
-  "Region L": "#fb5607",
-  "Region M": "#fb5607",
+  "Nordic Region": "#FF7B00",
+  "Mediterranean Region": "#008C45",
+  "New World Region": "#23D5D5",
+  "Iberian Region": "#F1BF00",
+  "British Isles Region": "#C8102E",
+  "Visegrad Region": "#6C3BAA",
+  "Germanic Region": "#7EB8C9",
+  "Baltic Region": "#006DAE",
+  "French Region": "#318CE7",
+  "Pan-Slavic Region": "#E8A0E8",
+  "Black Sea Region": "#B87333",
+  "Ex-Yugoslavian Region": "#FF4500",
+  "Benelux Region": "#CE009B",
 };
 const DEFAULT_COLOR = "#FFFFFF"; // white fallback for any regions not in the map above
 
@@ -42,12 +42,19 @@ const fillLayer: LayerProps = {
     "fill-color": [
       "case",
       ["boolean", ["feature-state", "selected"], false],
-      "#ff6b6b",                  // red   – selected
+      "#ff6b6b",
       ["boolean", ["feature-state", "hover"], false],
-      "#ffd93d",                  // yellow – hovered
-      buildColorExpression(),     // per-region colour – default
+      "#BBBBBB",
+      buildColorExpression(),
     ],
-    "fill-opacity": 0.7,
+    "fill-opacity": [
+      "case",
+      ["boolean", ["feature-state", "selected"], false],
+      0.9,
+      ["boolean", ["feature-state", "hover"], false],
+      0.85,
+      0.55,
+    ],
   },
 };
 

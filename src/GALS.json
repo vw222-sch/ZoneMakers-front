@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": { "name": "Region A" },
+      "properties": { "name": "Nordic Region" },
       "geometry": {
         "coordinates": [
           [
@@ -740,7 +740,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region B" },
+      "properties": { "name": "Mediterranean Region" },
       "geometry": {
         "coordinates": [
           [
@@ -1417,7 +1417,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region C" },
+      "properties": { "name": "New World Region" },
       "geometry": {
         "coordinates": [
           [
@@ -2038,7 +2038,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region D" },
+      "properties": { "name": "Iberian Region" },
       "geometry": {
         "coordinates": [
           [
@@ -2245,7 +2245,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region E" },
+      "properties": { "name": "British Isles Region" },
       "geometry": {
         "coordinates": [
           [
@@ -2384,7 +2384,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region F" },
+      "properties": { "name": "Visegrad Region" },
       "geometry": {
         "coordinates": [
           [
@@ -2779,7 +2779,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region G" },
+      "properties": { "name": "Germanic Region" },
       "geometry": {
         "coordinates": [
           [
@@ -3338,7 +3338,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region H" },
+      "properties": { "name": "Baltic Region" },
       "geometry": {
         "coordinates": [
           [
@@ -3505,7 +3505,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region I" },
+      "properties": { "name": "French Region" },
       "geometry": {
         "coordinates": [
           [
@@ -3794,7 +3794,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region J" },
+      "properties": { "name": "Pan-Slavic Region" },
       "geometry": {
         "coordinates": [
           [
@@ -4253,7 +4253,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region K" },
+      "properties": { "name": "Black Sea Region" },
       "geometry": {
         "coordinates": [
           [
@@ -4524,7 +4524,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region L" },
+      "properties": { "name": "Ex-Yugoslavian Region" },
       "geometry": {
         "coordinates": [
           [
@@ -4779,7 +4779,7 @@
     },
     {
       "type": "Feature",
-      "properties": { "name": "Region M" },
+      "properties": { "name": "Benelux Region" },
       "geometry": {
         "coordinates": [
           [
