@@ -3,7 +3,7 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region A" },
       "geometry": {
         "coordinates": [
           [
@@ -740,7 +740,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region B" },
       "geometry": {
         "coordinates": [
           [
@@ -1417,7 +1417,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region C" },
       "geometry": {
         "coordinates": [
           [
@@ -2038,7 +2038,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region D" },
       "geometry": {
         "coordinates": [
           [
@@ -2245,7 +2245,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region E" },
       "geometry": {
         "coordinates": [
           [
@@ -2384,7 +2384,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region F" },
       "geometry": {
         "coordinates": [
           [
@@ -2779,7 +2779,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region G" },
       "geometry": {
         "coordinates": [
           [
@@ -3338,7 +3338,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region H" },
       "geometry": {
         "coordinates": [
           [
@@ -3505,9 +3505,7 @@
     },
     {
       "type": "Feature",
-      "properties": {
-        "name": "France"
-      },
+      "properties": { "name": "Region I" },
       "geometry": {
         "coordinates": [
           [
@@ -3796,7 +3794,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region J" },
       "geometry": {
         "coordinates": [
           [
@@ -4255,7 +4253,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region K" },
       "geometry": {
         "coordinates": [
           [
@@ -4526,7 +4524,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region L" },
       "geometry": {
         "coordinates": [
           [
@@ -4781,7 +4779,7 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": { "name": "Region M" },
       "geometry": {
         "coordinates": [
           [
