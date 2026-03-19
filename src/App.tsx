@@ -10,6 +10,7 @@ import Support from '@/pages/Support';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import UserDetails from '@/pages/UserDetails';
+import Notifications from './pages/Notifications';
 
 export default function App() {
   return (
@@ -18,6 +19,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path='news' element={<News />} />
         <Route path='support' element={<Support />} />
+        <Route path='notifications' element={<Notifications />} />
       </Route>
 
       <Route path='chat' element={<Chat />} />

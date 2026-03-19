@@ -1,4 +1,4 @@
-import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft } from "lucide-react";
+import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell} from "lucide-react";
 
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Button } from "@/components/ui/button"
@@ -30,6 +30,9 @@ export default function Navbar() {
                     ))}
                 </div>
 
+                <Link to="/notifications" className="mt-8">
+                    <Bell size={35} />
+                </Link>
                 <Link to="/login" className="mt-8">
                     <CircleUser size={35} />
                 </Link>
