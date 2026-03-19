@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef} from 'react';
 import { Button } from '@/components/ui/button';
 
 interface NewsArticle {
@@ -46,7 +46,14 @@ const CATEGORIES = [
 
 type CategoryId = (typeof CATEGORIES)[number]["id"];
 
+interface CacheEntry {
+    articles: NewsArticle[];
+    offset: number;
+}
+
 export default function News() {
+    const cache = useRef<Partial<Record<CategoryId, CacheEntry>>>({});
+
     const [news, setNews] = useState<NewsArticle[]>([]);
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
@@ -56,7 +63,16 @@ export default function News() {
     const LIMIT = 9;
     const apiKey = import.meta.env.VITE_WORLD_NEWS_API_KEY || '';
 
-    const fetchNews = useCallback(async (currentOffset: number, categoryId: CategoryId) => {
+     const fetchNews = useCallback(async (currentOffset: number, categoryId: CategoryId) => {
+        // ── Serve from cache if available and not loading more ──
+        if (currentOffset === 0 && cache.current[categoryId]) {
+            const cached = cache.current[categoryId]!;
+            setNews(cached.articles);
+            setOffset(cached.offset);
+            setIsLoading(false);
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
 
@@ -77,9 +93,17 @@ export default function News() {
 
             const data: NewsResponse = await response.json();
 
-            setNews((prev) =>
-                currentOffset === 0 ? data.news : [...prev, ...data.news]
-            );
+            setNews((prev) => {
+                const updated = currentOffset === 0 ? data.news : [...prev, ...data.news];
+
+                // ── Write to cache ──
+                cache.current[categoryId] = {
+                    articles: updated,
+                    offset: currentOffset,
+                };
+
+                return updated;
+            });
         } catch (err: unknown) {
             setError(err instanceof Error ? err.message : "An unknown error occurred");
         } finally {
