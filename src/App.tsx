@@ -4,6 +4,7 @@ import Layout from '@/pages/Layout';
 import Home from '@/pages/Home';
 import Map from '@/pages/Map';
 import Chat from '@/pages/Chat';
+import Chatroom from '@/pages/Chatroom';
 import News from '@/pages/News';
 import Support from '@/pages/Support';
 
@@ -20,6 +21,7 @@ export default function App() {
         <Route path='news' element={<News />} />
         <Route path='support' element={<Support />} />
         <Route path='notifications' element={<Notifications />} />
+        <Route path='chat/:id' element={<Chatroom />} />
       </Route>
 
       <Route path='chat' element={<Chat />} />
