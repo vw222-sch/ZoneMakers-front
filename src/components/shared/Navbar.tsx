@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem,
 import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from "@/components/ui/button";
 
-import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell, UserIcon, SettingsIcon, LogOutIcon } from "lucide-react";
+import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell, UserIcon, SettingsIcon, LogOutIcon, Shield } from "lucide-react";
 
 export default function Navbar() {
     const navItems = [
@@ -23,7 +23,7 @@ export default function Navbar() {
     ];
 
     // Simulate login logic
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     return (
         <>
@@ -46,6 +46,10 @@ export default function Navbar() {
                     <>
                         <Link to="/notifications" className="mt-8">
                             <Bell size={35} />
+                        </Link>
+
+                        <Link to="/admin" className="mt-8">
+                            <Shield size={35} />
                         </Link>
 
                         <DropdownMenu>
