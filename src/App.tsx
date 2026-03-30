@@ -11,7 +11,8 @@ import Support from '@/pages/Support';
 import Login from '@/pages/Login';
 import Signup from '@/pages/Signup';
 import UserDetails from '@/pages/UserDetails';
-import Notifications from './pages/Notifications';
+import Notifications from '@/pages/Notifications';
+import Admin from '@/pages/Admin';
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
       <Route path='login' element={<Login />} />
       <Route path='signup' element={<Signup />} />
       <Route path='user-details' element={<UserDetails />} />
+      <Route path='admin' element={<Admin />} />
     </Routes>
   );
 }
