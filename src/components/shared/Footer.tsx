@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import { MapPinned, Map, MessagesSquare, CalendarDays, MailWarning } from 'lucide-react';
+import { MapPinned, Map, MessagesSquare, CalendarDays, HelpCircle } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -36,7 +36,7 @@ export default function Footer() {
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
                 <Link to="#">
-                  <MailWarning />
+                  <HelpCircle />
                   Support
                 </Link>
               </Button>

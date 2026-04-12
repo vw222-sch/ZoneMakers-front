@@ -1,125 +1,165 @@
-
-import { Link } from "react-router";
 import { useState } from 'react';
+import { Link } from "react-router";
 
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Button } from "@/components/ui/button";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Map, MapPinned, MailWarning, MessagesSquare, CircleUser, CalendarDays, PanelLeft, Bell, UserIcon, SettingsIcon, LogOutIcon, Shield } from "lucide-react";
+import { Map, MessagesSquare, CalendarDays, HelpCircle, MapPinned, CircleUser, Bell, Shield, BadgeCheck, SettingsIcon, LogOut, PanelLeft } from "lucide-react";
 
-export default function Navbar() {
-    const navItems = [
-        { icon: Map, title: 'Map', href: '/map' },
-        { icon: MessagesSquare, title: 'Chat', href: '/chat' },
-        { icon: CalendarDays, title: 'News', href: '/news' },
-        { icon: MailWarning, title: 'Support', href: '/support' },
-    ];
+const NAV_ITEMS = [
+    { icon: Map, title: 'Map', href: '/map' },
+    { icon: MessagesSquare, title: 'Chat', href: '/chat' },
+    { icon: CalendarDays, title: 'News', href: '/news' },
+    { icon: HelpCircle, title: 'Support', href: '/support' },
+];
 
-    const listItems = [
-        { icon: UserIcon, property: 'Profile' },
-        { icon: SettingsIcon, property: 'Settings' },
-        { icon: LogOutIcon, property: 'Sign Out' }
-    ];
+const USER_DATA = {
+    name: "John Doe",
+    email: "johndoe@example.com",
+    avatar: "https://github.com/shadcn.png",
+};
 
-    // Simulate login logic
+export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
     const [isLoggedIn, setIsLoggedIn] = useState(true);
 
     return (
-        <>
+        <TooltipProvider>
             {/* Desktop view */}
-            <nav className="hidden md:flex flex-col h-screen w-20 items-center py-4 border-r-2 overflow-y-auto">
+            <nav className={`hidden md:flex fixed top-0 left-0 h-screen w-16 flex-col items-center py-4 border-r-2 bg-background z-40 transition-transform duration-300 ease-in-out
+                ${isOpen ? 'translate-x-0' : '-translate-x-full'}
+            `}>
                 <Link to="/" className="mb-16">
-                    <MapPinned size={35} />
+                    <MapPinned size={30} />
                 </Link>
 
-                <div className="flex flex-1 flex-col gap-6">
-                    {navItems.map((item) => (
-                        <a key={item.title} href={item.href} className="flex flex-col items-center gap-1">
-                            <item.icon size={30} />
-                            <span className="text-[13px] font-bold tracking-wide">{item.title}</span>
-                        </a>
+                <div className="flex flex-1 flex-col gap-8 w-full items-center">
+                    {NAV_ITEMS.map((item) => (
+                        <Tooltip key={item.title}>
+                            <TooltipTrigger asChild>
+                                <Link to={item.href}>
+                                    <item.icon size={30} />
+                                </Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right">
+                                <p className="font-bold text-sm">{item.title}</p>
+                            </TooltipContent>
+                        </Tooltip>
                     ))}
                 </div>
 
-                {isLoggedIn ? (
-                    <>
-                        <Link to="/notifications" className="mt-8">
-                            <Bell size={35} />
-                        </Link>
+                <div className="flex flex-col items-center gap-6">
+                    {isLoggedIn ? (
+                        <>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Link to="/notifications"><Bell size={30} /></Link>
+                                </TooltipTrigger>
+                                <TooltipContent side="right"><p className="font-bold text-sm">Notifications</p></TooltipContent>
+                            </Tooltip>
 
-                        <Link to="/admin" className="mt-8">
-                            <Shield size={35} />
-                        </Link>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Link to="/admin"><Shield size={30} /></Link>
+                                </TooltipTrigger>
+                                <TooltipContent side="right"><p className="font-bold text-sm">Admin</p></TooltipContent>
+                            </Tooltip>
 
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant='secondary' size='icon' className='overflow-hidden rounded-full mt-6'>
-                                    <img src='https://cdn.shadcnstudio.com/ss-assets/avatar/avatar-5.png' alt='Hallie Richards' className="border-2" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent className='w-56'>
-                                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                                <DropdownMenuGroup>
-                                    {listItems.map((item, index) => (
-                                        <DropdownMenuItem
-                                            key={index}
-                                            onClick={() => {
-                                                if (item.property === 'Sign Out') setIsLoggedIn(false);
-                                            }}
-                                        >
-                                            <item.icon />
-                                            <span className='text-popover-foreground'>{item.property}</span>
-                                        </DropdownMenuItem>
-                                    ))}
-                                </DropdownMenuGroup>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </>
-                ) : (
-                    <Link to="/login" className="mt-8">
-                        <CircleUser size={35} />
-                    </Link>
-                )}
-            </nav>
-
-            {/** Mobile view */}
-            <nav className="flex h-20 border-b-2 px-4">
-                <div className="flex w-full items-center justify-between">
-                    <a href="#">
-                        <MapPinned size={35} />
-                    </a>
-
-                    <Sheet>
-                        <SheetTrigger asChild>
-                            <PanelLeft size={25} />
-                        </SheetTrigger>
-                        <SheetContent side='right'>
-                            <SheetHeader>
-                                <SheetTitle>
-                                    <MapPinned size={35} />
-                                </SheetTitle>
-                            </SheetHeader>
-
-                            <div className="flex flex-1 flex-col gap-8 pt-8 pl-4">
-                                {navItems.map((item) => (
-                                    <a key={item.title} href={item.href} className="flex items-center gap-2">
-                                        <item.icon size={30} />
-                                        <span className="text-lg font-bold tracking-wide">{item.title}</span>
-                                    </a>
-                                ))}
-                            </div>
-
-                            <SheetFooter>
-                                <Button type='button' onClick={() => setIsLoggedIn(true)} className="font-bold text-base">Login</Button>
-                                <SheetClose asChild>
-                                    <Button variant='outline' className="font-bold text-base">Sign up</Button>
-                                </SheetClose>
-                            </SheetFooter>
-                        </SheetContent>
-                    </Sheet>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <Button variant='ghost' size='icon' className='rounded-full border-2 cursor-pointer'>
+                                        <Avatar className="h-full w-full">
+                                            <AvatarImage src={USER_DATA.avatar} alt={USER_DATA.name} />
+                                            <AvatarFallback>CN</AvatarFallback>
+                                        </Avatar>
+                                    </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent className="w-56 rounded-lg" side="right" align="end" sideOffset={4}>
+                                    <DropdownMenuLabel className="p-0 font-normal">
+                                        <div className="flex items-center gap-2 p-1 text-left text-sm">
+                                            <Avatar className="h-8 w-8 rounded-full">
+                                                <AvatarImage src={USER_DATA.avatar} alt={USER_DATA.name} />
+                                                <AvatarFallback>CN</AvatarFallback>
+                                            </Avatar>
+                                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                                <span className="truncate font-medium">{USER_DATA.name}</span>
+                                                <span className="truncate text-xs">{USER_DATA.email}</span>
+                                            </div>
+                                        </div>
+                                    </DropdownMenuLabel>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuGroup>
+                                        <DropdownMenuItem className='cursor-pointer'><BadgeCheck className="mr-2 h-4 w-4" /> Account</DropdownMenuItem>
+                                        <DropdownMenuItem className='cursor-pointer'><SettingsIcon className="mr-2 h-4 w-4" /> Settings</DropdownMenuItem>
+                                        <DropdownMenuItem className='cursor-pointer'><Bell className="mr-2 h-4 w-4" /> Notifications</DropdownMenuItem>
+                                    </DropdownMenuGroup>
+                                    <DropdownMenuSeparator />
+                                    <DropdownMenuItem variant='destructive' className='cursor-pointer' onClick={() => setIsLoggedIn(false)}>
+                                        <LogOut className="mr-2 h-4 w-4" /> Log out
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        </>
+                    ) : (
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Link to="/login" className="mt-8 cursor-pointer"><CircleUser size={30} /></Link>
+                            </TooltipTrigger>
+                            <TooltipContent side="right"><p className="font-bold text-sm">Login</p></TooltipContent>
+                        </Tooltip>
+                    )}
                 </div>
             </nav>
-        </>
+
+            {/* Mobile view */}
+            <nav className="md:hidden fixed top-0 left-0 w-full h-20 border-b-2 px-4 bg-background z-40 flex items-center justify-between shadow-sm">
+                <Link to="/">
+                    <MapPinned size={35} />
+                </Link>
+
+                <Sheet>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                            <PanelLeft size={30} className='cursor-pointer' />
+                        </Button>
+                    </SheetTrigger>
+                    <SheetContent side='right' className="flex flex-col">
+                        <SheetHeader>
+                            <SheetTitle className="flex justify-start">
+                                <MapPinned size={35} />
+                            </SheetTitle>
+                        </SheetHeader>
+
+                        <div className="flex flex-1 flex-col gap-6 pt-8 pl-4">
+                            {NAV_ITEMS.map((item) => (
+                                <SheetClose asChild key={item.title}>
+                                    <Link to={item.href} className="flex items-center gap-4">
+                                        <item.icon size={30} />
+                                        <span className="text-lg font-bold tracking-wide">{item.title}</span>
+                                    </Link>
+                                </SheetClose>
+                            ))}
+                        </div>
+
+                        <SheetFooter className="mt-auto">
+                            {isLoggedIn ? (
+                                <Button variant='destructive' onClick={() => setIsLoggedIn(false)} className="w-full font-bold text-base">
+                                    Log out
+                                </Button>
+                            ) : (
+                                <div className="flex flex-col gap-2 w-full">
+                                    <Button type='button' onClick={() => setIsLoggedIn(true)} className="w-full font-bold text-base">Login</Button>
+                                    <SheetClose asChild>
+                                        <Button variant='outline' className="w-full font-bold text-base">Sign up</Button>
+                                    </SheetClose>
+                                </div>
+                            )}
+                        </SheetFooter>
+                    </SheetContent>
+                </Sheet>
+            </nav>
+        </TooltipProvider>
     );
 }
