@@ -1,17 +1,17 @@
 import { Route, Routes } from 'react-router';
 
 import Layout from '@/pages/Layout';
-import Home from '@/pages/Home';
-import Map from '@/pages/Map';
-import Chat from '@/pages/Chat';
-import Chatroom from '@/pages/Chatroom';
-import News from '@/pages/News';
-import Support from '@/pages/Support';
+import Home from '@/pages/main/Home';
+import Map from '@/pages/main/Map';
+import Chat from '@/pages/main/Chat';
+import Chatroom from '@/pages/side/Chatroom';
+import News from '@/pages/main/News';
+import Support from '@/pages/main/Support';
 
-import Login from '@/pages/Login';
-import Signup from '@/pages/Signup';
-import UserDetails from '@/pages/UserDetails';
-import Notifications from '@/pages/Notifications';
+import Login from '@/pages/side/Login';
+import Signup from '@/pages/side/Signup';
+import UserDetails from '@/pages/side/UserDetails';
+import Notifications from '@/pages/main/Notifications';
 import Admin from '@/pages/Admin';
 
 export default function App() {
