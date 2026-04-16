@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef } from "react";
-import Map, { Source, Layer, NavigationControl, Popup } from "react-map-gl/mapbox";
-import type { MapRef, LayerProps, MapLayerMouseEvent } from "react-map-gl/mapbox";
+import Map, { Source, Layer, Popup } from "react-map-gl/mapbox";
+import type { MapRef, LayerProps, MapMouseEvent } from "react-map-gl/mapbox";
 import { useNavigate } from "react-router";
 import "mapbox-gl/dist/mapbox-gl.css";
 
@@ -91,7 +91,7 @@ export default function DACHMap() {
   const [popupInfo, setPopupInfo] = useState<PopupInfo | null>(null);
 
   const onClick = useCallback(
-    (event: MapLayerMouseEvent) => {
+    (event: MapMouseEvent) => {
       const feature = event.features?.[0];
       if (!feature) return;
 
@@ -116,7 +116,7 @@ export default function DACHMap() {
   );
 
   const onMouseMove = useCallback(
-    (event: MapLayerMouseEvent) => {
+    (event: MapMouseEvent) => {
       const feature = event.features?.[0];
 
       if (hoveredRegion !== null && hoveredRegion !== selectedRegion) {
@@ -165,7 +165,7 @@ export default function DACHMap() {
       mapStyle="mapbox://styles/mapbox/dark-v11"
       mapboxAccessToken={import.meta.env.VITE_MAPBOX_TOKEN}
     >
-      <Source id="regions" type="geojson" data={MY_GEOJSON} generateId>
+      <Source id="regions" type="geojson" data={MY_GEOJSON as unknown as GeoJSON.FeatureCollection} generateId>
         <Layer {...fillLayer} />
         <Layer {...lineLayer} />
       </Source>
