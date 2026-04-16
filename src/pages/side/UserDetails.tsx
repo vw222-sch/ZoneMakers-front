@@ -3,7 +3,7 @@
 import { useState } from "react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { BadgeCheck, MessageCircle, Plus, MapPin, Camera, Plane, Star, Award, Quote, Footprints, Trophy } from "lucide-react"
+import { BadgeCheck, MessageCircle, Plus, MapPin, Camera, Plane, Star, Award, Quote, Footprints, Trophy, Cog, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 const REPUTATION_COLORS = [
@@ -93,13 +93,7 @@ export default function UserDetails() {
                                     className="p-5 font-bold border-2 text-sm rounded-4xl cursor-pointer shadow-lg transition-all"
                                     style={{ background: a, color: "#000", border: "none", boxShadow: `0 0 18px ${g}` }}
                                 >
-                                    Follow <Plus className="w-4 h-4" />
-                                </Button>
-                                <Button
-                                    className="p-5 text-sm rounded-4xl cursor-pointer transition-all font-bold"
-                                    style={{ background: "#111", color: a, border: `1px solid ${a}44` }}
-                                >
-                                    Message <MessageCircle className="w-4 h-4" />
+                                    Settings <Settings className="w-4 h-4" />
                                 </Button>
                             </div>
                         </div>
