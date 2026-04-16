@@ -18,12 +18,12 @@ export default function Login() {
         setLoading(true)
 
         try {
-            const res = await fetch("/login", {
+            const res = await fetch("http://localhost:3000/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ username, password }),
+                body: JSON.stringify({ handle: username, password }),
             })
 
             const data = await res.json().catch(() => ({}))
@@ -34,13 +34,36 @@ export default function Login() {
             }
 
             const token = data?.token ?? data?.accessToken ?? null
+            const id = data?.id ?? data?.userId ?? null
+
             if (token) {
                 localStorage.setItem("authToken", token)
+                if (id) {
+                    localStorage.setItem("userId", id)
+                }
             } else {
                 localStorage.setItem("authData", JSON.stringify(data))
             }
 
             navigate("/")
+        } catch (err: any) {
+            setError(err?.message || "Network error")
+        } finally {
+            setLoading(false)
+        }
+
+
+        try {
+            const res = await fetch(`http://localhost:3000/user/${localStorage.getItem("userId")}`)
+
+            const data = await res.json().catch(() => ({}))
+
+            if (!res.ok) {
+                setError((data && (data.message || data.error)) || `Fetch failed (${res.status})`)
+                return
+            }
+
+            localStorage.setItem("userData", JSON.stringify(data))
         } catch (err: any) {
             setError(err?.message || "Network error")
         } finally {

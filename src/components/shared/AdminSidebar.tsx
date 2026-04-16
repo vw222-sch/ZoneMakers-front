@@ -5,7 +5,7 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, Sid
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuGroup, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Frame, MapPinned, ChevronRight, BadgeCheck, Bell, ChevronsUpDown, SettingsIcon, LogOut } from "lucide-react"
+import { Frame, MapPinned, ChevronRight, BadgeCheck, Bell, ChevronsUpDown, SettingsIcon, LogOut, User, MessagesSquare, Map } from "lucide-react"
 
 const data = {
     user: {
@@ -37,8 +37,9 @@ const data = {
         },
     ],
     projects: [
-        { name: "Menu 5", url: "#", icon: Frame },
-        { name: "Menu 6", url: "#", icon: Frame },
+        { name: "User Report", url: "#", icon: User },
+        { name: "Chat Report", url: "#", icon: MessagesSquare },
+        { name: "Polygon Report", url: "#", icon: Map },
     ],
 }
 
@@ -103,7 +104,7 @@ export default function AdminSidebar() {
                 </SidebarGroup>
 
                 <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-                    <SidebarGroupLabel>Menu Label 2</SidebarGroupLabel>
+                    <SidebarGroupLabel>Reports</SidebarGroupLabel>
                     <SidebarMenu>
                         {data.projects.map((item) => (
                             <SidebarMenuItem key={item.name}>

@@ -97,45 +97,14 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                                                 <AvatarFallback>CN</AvatarFallback>
                                             </Avatar>
                                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                                <span className="truncate font-medium">{USER_DATA.name}</span>
-                                                <span className="truncate text-xs">{USER_DATA.email}</span>
+                                                <span className="truncate font-medium">{JSON.parse(localStorage.getItem("userData") ?? "{}").username}</span>
+                                                <span className="truncate text-xs">@{JSON.parse(localStorage.getItem("userData") ?? "{}").handle}</span>
                                             </div>
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
                                         <DropdownMenuItem className='cursor-pointer'><BadgeCheck className="mr-2 h-4 w-4" /> Account</DropdownMenuItem>
-
-                                        <Dialog>
-                                            <form>
-                                                <DialogTrigger asChild>
-                                                    <DropdownMenuItem className='cursor-pointer' onSelect={(e) => e.preventDefault()}><SettingsIcon className="mr-2 h-4 w-4" /> Settings</DropdownMenuItem>
-                                                </DialogTrigger>
-                                                <DialogContent className='top-0 mt-6 translate-y-0 sm:max-w-[425px]'>
-                                                    <DialogHeader>
-                                                        <DialogTitle>Edit profile</DialogTitle>
-                                                        <DialogDescription>Make changes to your profile here. Click save when you&apos;re done.</DialogDescription>
-                                                    </DialogHeader>
-                                                    <div className='grid gap-4'>
-                                                        <div className='grid gap-3'>
-                                                            <Label htmlFor='name-1'>Name</Label>
-                                                            <Input id='name-1' name='name' defaultValue={USER_DATA.name} />
-                                                        </div>
-                                                        <div className='grid gap-3'>
-                                                            <Label htmlFor='email-1'>Email</Label>
-                                                            <Input id='email-1' name='username' defaultValue={USER_DATA.email} />
-                                                        </div>
-                                                    </div>
-                                                    <DialogFooter>
-                                                        <DialogClose asChild>
-                                                            <Button variant='outline'>Cancel</Button>
-                                                        </DialogClose>
-                                                        <Button type='submit'>Save changes</Button>
-                                                    </DialogFooter>
-                                                </DialogContent>
-                                            </form>
-                                        </Dialog>
-
                                         <DropdownMenuItem className='cursor-pointer'><Bell className="mr-2 h-4 w-4" /> Notifications</DropdownMenuItem>
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
