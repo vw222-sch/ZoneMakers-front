@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button"
 import { MapPinned } from "lucide-react";
 import { Link } from "react-router";
 import { useState } from "react";
-import { signup } from "../api/auth/WebToken";
 
 {/**
 import { useId } from 'react'

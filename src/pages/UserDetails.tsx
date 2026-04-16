@@ -7,12 +7,12 @@ import { BadgeCheck, MessageCircle, Plus, MapPin, Camera, Plane, Star, Award, Qu
 import { Button } from "@/components/ui/button"
 
 const REPUTATION_COLORS = [
-    { name: "Red",     hex: "#ff4444", glow: "#ff000066", dark: "#1a0000" },
-    { name: "Blue",    hex: "#4488ff", glow: "#0044ff66", dark: "#00091a" },
-    { name: "Green",   hex: "#44ff88", glow: "#00ff4466", dark: "#001a0a" },
+    { name: "Red", hex: "#ff4444", glow: "#ff000066", dark: "#1a0000" },
+    { name: "Blue", hex: "#4488ff", glow: "#0044ff66", dark: "#00091a" },
+    { name: "Green", hex: "#44ff88", glow: "#00ff4466", dark: "#001a0a" },
     { name: "Magenta", hex: "#ff44ff", glow: "#ff00ff66", dark: "#1a001a" },
-    { name: "Cyan",    hex: "#44ffff", glow: "#00ffff66", dark: "#001a1a" },
-    { name: "Yellow",  hex: "#ffee44", glow: "#ffee0066", dark: "#1a1400" },
+    { name: "Cyan", hex: "#44ffff", glow: "#00ffff66", dark: "#001a1a" },
+    { name: "Yellow", hex: "#ffee44", glow: "#ffee0066", dark: "#1a1400" },
 ]
 
 export default function UserDetails() {
