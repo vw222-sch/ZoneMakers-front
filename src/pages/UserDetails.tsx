@@ -28,7 +28,6 @@ export default function UserDetails() {
             background: `radial-gradient(ellipse at 60% 0%, ${d} 0%, #101010 55%, #000 100%)`,
             minHeight: "100vh",
         }}>
-            {/* Color picker strip */}
             <div style={{
                 background: "#050505",
                 borderBottom: "1px solid #1a1a1a",
@@ -60,8 +59,6 @@ export default function UserDetails() {
 
             <div className="container mx-auto px-4 sm:px-8 h-fit max-w-7xl">
                 <div className="flex flex-col w-full gap-4 rounded-4xl pb-4">
-
-                    {/* Banner */}
                     <div
                         className="flex items-center gap-8 p-8 rounded-t-4xl relative"
                         style={{
@@ -69,7 +66,6 @@ export default function UserDetails() {
                             borderBottom: `1px solid ${a}33`,
                         }}
                     >
-                        {/* Grid overlay */}
                         <div style={{
                             position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
                             backgroundImage: `linear-gradient(${a}08 1px, transparent 1px), linear-gradient(90deg, ${a}08 1px, transparent 1px)`,
@@ -137,10 +133,8 @@ export default function UserDetails() {
                         </div>
                     </div>
 
-                    {/* Body */}
                     <div className="flex flex-col lg:flex-row gap-4 px-4 pb-4">
 
-                        {/* Travel Log */}
                         <div className="flex-1">
                             <div
                                 className="h-full min-h-125 p-8"
@@ -152,7 +146,6 @@ export default function UserDetails() {
                                 </div>
 
                                 <div className="space-y-6">
-                                    {/* Check-in */}
                                     <div className="flex gap-4 p-6 rounded-3xl transition-colors" style={{ background: "#0d0d0d", border: `1px solid ${a}1a` }}>
                                         <div className="p-3 rounded-2xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}>
                                             <MapPin style={{ color: a, width: 24, height: 24 }} />
@@ -170,7 +163,6 @@ export default function UserDetails() {
                                         </div>
                                     </div>
 
-                                    {/* Review */}
                                     <div className="flex gap-4 p-6 rounded-3xl transition-colors" style={{ background: "#0d0d0d", border: `1px solid ${a}1a` }}>
                                         <div className="p-3 rounded-2xl h-fit" style={{ background: "#ffee4415", border: "1px solid #ffee4433" }}>
                                             <Star style={{ color: "#ffee44", width: 24, height: 24 }} />
@@ -187,7 +179,6 @@ export default function UserDetails() {
                                         </div>
                                     </div>
 
-                                    {/* Photos */}
                                     <div className="flex gap-4 p-6 rounded-3xl transition-colors" style={{ background: "#0d0d0d", border: `1px solid ${a}1a` }}>
                                         <div className="p-3 rounded-2xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}>
                                             <Camera style={{ color: a, width: 24, height: 24 }} />
@@ -204,10 +195,8 @@ export default function UserDetails() {
                             </div>
                         </div>
 
-                        {/* Right column */}
                         <div className="flex flex-col lg:w-100 gap-4">
 
-                            {/* About Me */}
                             <div
                                 className="p-6 h-fit"
                                 style={{ background: "linear-gradient(160deg, #111 0%, #0d0d0d 100%)", border: `1px solid ${a}22`, borderRadius: "1.5rem" }}
@@ -232,7 +221,6 @@ export default function UserDetails() {
                                 </div>
                             </div>
 
-                            {/* Achievements */}
                             <div
                                 className="p-8 h-full flex flex-col"
                                 style={{ background: "linear-gradient(160deg, #111 0%, #080808 100%)", border: `1px solid ${a}22`, borderRadius: "1.5rem" }}

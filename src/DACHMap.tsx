@@ -6,8 +6,6 @@ import "mapbox-gl/dist/mapbox-gl.css";
 
 import MY_GEOJSON from "./GALS.json";
 
-// ─── 1. Define your region colours ───────────────────────────────────────────
-// Keys must match the `name` property in your GeoJSON features.
 const REGION_COLORS: Record<string, string> = {
   "Nordic Region": "#FF7B00",
   "Mediterranean Region": "#008C45",
@@ -31,8 +29,8 @@ const buildColorExpression = (): mapboxgl.Expression => {
   for (const [name, color] of Object.entries(REGION_COLORS)) {
     cases.push(["==", ["get", "name"], name], color);
   }
-  cases.push(DEFAULT_COLOR); // fallback
-  return cases as mapboxgl.Expression;
+  cases.push(DEFAULT_COLOR);
+  return cases as mapboxgl.ExpressionSpecification;
 };
 
 const fillLayer: LayerProps = {
@@ -67,7 +65,7 @@ const lineLayer: LayerProps = {
   },
 };
 
-const getRegionName = (feature: mapboxgl.MapboxGeoJSONFeature): string =>
+const getRegionName = (feature: mapboxgl.GeoJSONFeature): string =>
   (feature.properties?.name as string | undefined) ?? `Region ${feature.id}`;
 
 interface PopupInfo {
@@ -179,7 +177,6 @@ export default function DACHMap() {
           offset={[0, -10] as [number, number]}
         >
           <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            {/* colour swatch matching the region */}
             <span
               style={{
                 width: 12,
