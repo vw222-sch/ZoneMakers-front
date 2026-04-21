@@ -7,14 +7,14 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import MY_GEOJSON from "./GALS.json";
 
 const REGION_COLORS: Record<string, string> = {
-  "Nordic Region": "#FF7B00",
+  "Nordic Region": "#16D8FA",
   "Mediterranean Region": "#008C45",
-  "New World Region": "#23D5D5",
+  "New World Region": "#1CCD92",
   "Iberian Region": "#F1BF00",
   "British Isles Region": "#C8102E",
   "Visegrad Region": "#6C3BAA",
   "Germanic Region": "#7EB8C9",
-  "Baltic Region": "#006DAE",
+  "Baltic Region": "#6CD405",
   "French Region": "#318CE7",
   "Pan-Slavic Region": "#E8A0E8",
   "Black Sea Region": "#B87333",
