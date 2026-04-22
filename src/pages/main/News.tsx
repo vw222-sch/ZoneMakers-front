@@ -23,28 +23,23 @@ interface NewsResponse {
 const CATEGORIES = [
     {
         id: "conflicts",
-        label: "⚔️ Conflicts & War",
-        query: "war OR conflict OR airstrike OR NATO OR Ukraine OR ceasefire",
+        label: "Conflicts & War",
+        query: "war OR conflict OR airstrike OR NATO OR Ukraine OR ceasefire OR protest OR coup",
     },
     {
         id: "crime",
-        label: "🔪 Crime & Violence",
+        label: "Crime & Violence",
         query: "crime OR terrorism OR stabbing OR shooting OR attack",
     },
     {
         id: "advisory",
-        label: "🚨 Travel Advisories",
+        label: "Travel Advisories",
         query: "travel advisory OR travel warning OR travel ban",
     },
     {
         id: "disasters",
-        label: "🏚️ Disasters & Emergencies",
-        query: "disaster OR emergency OR collapse OR wildfire OR explosion",
-    },
-    {
-        id: "politics",
-        label: "🗳️ Politics & Instability",
-        query: "election OR protest OR coup OR sanctions OR political crisis",
+        label: "Disasters & Emergencies",
+        query: "disaster OR emergency OR collapse OR wildfire OR explosion OR pandemic",
     },
 ] as const;
 

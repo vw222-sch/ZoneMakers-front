@@ -122,7 +122,7 @@ function AccentBadge({ label, a }: { label: string; a: string }) {
 }
 
 function TravelLogEntry({
-    entry, a, g,
+    entry, a,
 }: {
     entry: (typeof TRAVEL_LOG)[number]; a: string; g: string
 }) {
