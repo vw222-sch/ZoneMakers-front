@@ -1,336 +1,402 @@
-"use client"
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate, useParams } from "react-router";
+import { BadgeCheck, MessageCircle, MapPin, Quote, Footprints, Settings, Trash2, Save } from "lucide-react";
 
-import { useState } from "react"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {BadgeCheck, MapPin, Camera, Plane, Star,Award, Quote, Footprints, Trophy, Settings,} from "lucide-react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 
-const ACCENT_COLORS = [
-    { name: "Red",     hex: "#ff4444", glow: "#ff000066", dark: "#1a0000" },
-    { name: "Blue",    hex: "#4444ff", glow: "#0000ff66", dark: "#00001a" },
-    { name: "Green",   hex: "#44ff44", glow: "#00ff0066", dark: "#001a00" },
-    { name: "Magenta", hex: "#ff44ff", glow: "#ff00ff66", dark: "#1a001a" },
-    { name: "Cyan",    hex: "#44ffff", glow: "#00ffff66", dark: "#001a1a" },
-    { name: "Yellow",  hex: "#ffff44", glow: "#ffff0066", dark: "#1a1a00" },
-]
+import type { User, BadgeData } from "@/types";
+import * as userService from "@/services/userService";
+import * as notificationService from "@/services/notificationService";
+import { useAuth } from "@/hooks/AuthContext";
+import { getErrorMessage } from "@/lib/api";
 
-const USER = {
-    name:       "John Doe",
-    handle:     "@johndoe",
-    avatarSrc:  "https://github.com/shadcn.png",
-    level:      12,
-    reputation: 850,
-    bio:        "Digital nomad & coffee addict. ☕\nI love discovering hidden gems and local food. Currently exploring Central Europe.",
-    tags:       ["Backpacker", "Foodie", "History"],
-}
+const THEME_COLORS = [
+    { id: 1, name: "Red", hex: "#ff4444", glow: "#ff000066", dark: "#1a0000" },
+    { id: 2, name: "Blue", hex: "#4488ff", glow: "#0044ff66", dark: "#00091a" },
+    { id: 3, name: "Green", hex: "#44ff88", glow: "#00ff4466", dark: "#001a0a" },
+    { id: 4, name: "Magenta", hex: "#ff44ff", glow: "#ff00ff66", dark: "#1a001a" },
+    { id: 5, name: "Cyan", hex: "#44ffff", glow: "#00ffff66", dark: "#001a1a" },
+    { id: 6, name: "Yellow", hex: "#ffee44", glow: "#ffee0066", dark: "#1a1400" },
+];
 
-const TRAVEL_LOG: Array<{
-    icon:      React.ElementType
-    iconColor: string
-    title:     string
-    time:      string
-    body:      string
-    tags?:     string[]
-    stars?:    number
-}> = [
-    {
-        icon:      MapPin,
-        iconColor: "accent",
-        title:     "Checked in at Budapest",
-        time:      "2 hours ago",
-        body:      "Visiting the Parliament building. The architecture is absolutely stunning! 🏛️",
-        tags:      ["#architecture", "#hungary"],
-    },
-    {
-        icon:      Star,
-        iconColor: "#ffee44",
-        title:     'Reviewed "Gelarto Rosa"',
-        time:      "Yesterday",
-        body:      "Best ice cream in town! You have to try the pistachio flavor. 🍦",
-        stars:     5,
-    },
-    {
-        icon:      Camera,
-        iconColor: "accent",
-        title:     "Uploaded 12 new photos",
-        time:      "3 days ago",
-        body:      'Album: "Hiking in the High Tatras" 🏔️',
-    },
-]
-
-const ACHIEVEMENTS: Array<{
-    icon:   React.ElementType
-    label:  string
-    locked: boolean
-}> = [
-    { icon: Award,  label: "Top Reviewer",   locked: false },
-    { icon: Plane,  label: "Frequent Flyer", locked: false },
-    { icon: MapPin, label: "Local Guide",    locked: false },
-    { icon: Camera, label: "Photographer",   locked: true  },
-]
-
-function Card({
-    a, children, className = "", style = {},
-}: {
-    a: string; children: React.ReactNode; className?: string; style?: React.CSSProperties
-}) {
-    return (
-        <div
-            className={className}
-            style={{
-                background:   "linear-gradient(160deg, #111 0%, #0d0d0d 100%)",
-                border:       `1px solid ${a}22`,
-                borderRadius: "1.5rem",
-                ...style,
-            }}
-        >
-            {children}
-        </div>
-    )
-}
-
-function IconCircle({
-    Icon, a, g, size = 64, iconSize = 28, locked = false,
-}: {
-    Icon: React.ElementType; a: string; g: string
-    size?: number; iconSize?: number; locked?: boolean
-}) {
-    return (
-        <div style={{
-            width:      size, height: size,
-            borderRadius: "50%",
-            background: locked ? "#0d0d0d" : `${a}12`,
-            border:     locked ? "2px dashed #222" : `2px solid ${a}66`,
-            boxShadow:  locked ? "none" : `0 0 16px ${g}`,
-            display:    "flex", alignItems: "center", justifyContent: "center",
-        }}>
-            <Icon style={{ color: locked ? "#333" : a, width: iconSize, height: iconSize }} />
-        </div>
-    )
-}
-
-function AccentBadge({ label, a }: { label: string; a: string }) {
-    return (
-        <Badge
-            className="rounded-xl px-3 py-1 border-none font-semibold"
-            style={{ background: `${a}18`, color: a, border: `1px solid ${a}44` }}
-        >
-            {label}
-        </Badge>
-    )
-}
-
-function TravelLogEntry({
-    entry, a,
-}: {
-    entry: (typeof TRAVEL_LOG)[number]; a: string; g: string
-}) {
-    const iconColor = entry.iconColor === "accent" ? a : entry.iconColor
-    return (
-        <div className="flex gap-4 p-6 rounded-3xl" style={{ background: "#0d0d0d", border: `1px solid ${a}1a` }}>
-            <div className="p-3 rounded-2xl h-fit" style={{ background: `${iconColor}15`, border: `1px solid ${iconColor}33` }}>
-                <entry.icon style={{ color: iconColor, width: 24, height: 24 }} />
-            </div>
-
-            <div className="flex-1">
-                <div className="flex justify-between items-start">
-                    <h3 className="font-bold text-lg" style={{ color: "#e8e8e8" }}>{entry.title}</h3>
-                    <span className="text-xs px-2 py-1 rounded-lg" style={{ color: "#555", background: "#080808" }}>
-                        {entry.time}
-                    </span>
-                </div>
-
-                <p className="mt-1" style={{ color: "#777" }}>{entry.body}</p>
-
-                {entry.tags && (
-                    <div className="flex gap-2 mt-3">
-                        {entry.tags.map(tag => (
-                            <Badge key={tag} variant="outline" className="rounded-lg" style={{ color: a, borderColor: `${a}44` }}>
-                                {tag}
-                            </Badge>
-                        ))}
-                    </div>
-                )}
-
-                {entry.stars && (
-                    <div className="flex gap-1 mt-2">
-                        {Array.from({ length: entry.stars }).map((_, i) => (
-                            <Star key={i} className="w-4 h-4" style={{ color: "#ffee44", fill: "#ffee44" }} />
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
-    )
-}
-
-function TravelLog({ a, g }: { a: string; g: string }) {
-    return (
-        <Card a={a} className="h-full min-h-125 p-8">
-            <div className="flex items-center gap-3 mb-8 pb-4" style={{ borderBottom: `1px solid ${a}22` }}>
-                <Footprints style={{ color: a, width: 32, height: 32, filter: `drop-shadow(0 0 6px ${a})` }} />
-                <h2 className="font-bold text-3xl tracking-wider" style={{ color: "#e8e8e8" }}>Travel Log</h2>
-            </div>
-            <div className="space-y-6">
-                {TRAVEL_LOG.map(entry => (
-                    <TravelLogEntry key={entry.title} entry={entry} a={a} g={g} />
-                ))}
-            </div>
-        </Card>
-    )
-}
-
-function AboutMe({ a }: { a: string }) {
-    return (
-        <Card a={a} className="p-6 h-fit">
-            <h2 className="text-center font-bold text-2xl tracking-wider mb-4 flex items-center justify-center gap-2" style={{ color: "#e8e8e8" }}>
-                <Quote className="w-5 h-5" style={{ fill: `${a}50`, color: "transparent" }} />
-                About Me
-            </h2>
-            <p className="font-medium text-lg text-center text-balance leading-relaxed whitespace-pre-line" style={{ color: "#777" }}>
-                {USER.bio}
-            </p>
-            <div className="mt-6 flex flex-wrap justify-center gap-2">
-                {USER.tags.map(tag => <AccentBadge key={tag} label={tag} a={a} />)}
-            </div>
-        </Card>
-    )
-}
-
-function Achievements({ a, g }: { a: string; g: string }) {
-    return (
-        <Card a={a} className="p-8 h-full flex flex-col">
-            <h2 className="text-center font-bold text-2xl tracking-wider mb-6 flex items-center justify-center gap-2" style={{ color: "#e8e8e8" }}>
-                <Trophy className="w-6 h-6" style={{ color: a }} /> Achievements
-            </h2>
-
-            <div className="grid grid-cols-3 gap-4 place-items-center">
-                {ACHIEVEMENTS.map(({ icon: Icon, label, locked }) => (
-                    <div
-                        key={label}
-                        className={`flex flex-col items-center gap-2 group cursor-pointer ${locked ? "opacity-40 grayscale" : ""}`}
-                    >
-                        <div className="group-hover:scale-110 transition-transform duration-200">
-                            <IconCircle Icon={Icon} a={a} g={g} locked={locked} />
-                        </div>
-                        <span className="text-xs font-bold text-center" style={{ color: locked ? "#333" : "#aaa" }}>
-                            {label}
-                        </span>
-                    </div>
-                ))}
-            </div>
-
-            <Button variant="link" className="mt-auto pt-6" style={{ color: `${a}88` }}>
-                View All 12 Stamps
-            </Button>
-        </Card>
-    )
-}
+const safeParseJSON = <T,>(str: string | null | undefined | number[], fallback: T): T => {
+    if (!str) return fallback;
+    if (Array.isArray(str)) return str as T;
+    try {
+        return JSON.parse(str);
+    } catch {
+        return fallback;
+    }
+};
 
 export default function UserDetails() {
-    const [colorIndex, setColorIndex] = useState(1)
-    const { hex: a, glow: g, dark: d } = ACCENT_COLORS[colorIndex]
+    const params = useParams();
+    const userId = params.userId as string;
+    const navigate = useNavigate();
+
+    const { state: authState, logout: contextLogout } = useAuth();
+    const isOwner = authState.userId?.toString() === userId;
+    const isAdmin = authState.isAdmin;
+    const canEdit = isOwner || isAdmin;
+
+    const [user, setUser] = useState<User | null>(null);
+    const [badgeDetails, setBadgeDetails] = useState<BadgeData[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const [colorIndex, setColorIndex] = useState(0);
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [isSaving, setIsSaving] = useState(false);
+
+    const [formData, setFormData] = useState({
+        username: "",
+        handle: "",
+        email: "",
+        bio: "",
+        avatar: "",
+        theme: 1,
+        password: "",
+        pinned_badges: [] as number[]
+    });
+
+    const fetchUserData = useCallback(async () => {
+        if (!userId) return;
+        try {
+            setLoading(true);
+            const { user: userData, badges } = await userService.fetchUserWithBadges(userId);
+
+            setUser(userData);
+            setBadgeDetails(badges);
+
+            const userThemeIndex = THEME_COLORS.findIndex(t => t.id === userData.theme);
+            setColorIndex(userThemeIndex !== -1 ? userThemeIndex : 0);
+
+            const parsedPinned = safeParseJSON<number[]>(userData.pinned_badges, []);
+
+            setFormData({
+                username: userData.username || "",
+                handle: userData.handle || "",
+                email: userData.email || "",
+                bio: userData.bio || "",
+                avatar: userData.avatar || "",
+                theme: userData.theme || 1,
+                password: "",
+                pinned_badges: parsedPinned
+            });
+        } catch (err) {
+            console.error(err);
+            setError(getErrorMessage(err));
+        } finally {
+            setLoading(false);
+        }
+    }, [userId]);
+
+    useEffect(() => {
+        fetchUserData();
+    }, [fetchUserData]);
+
+    const togglePinnedBadge = (badgeId: number) => {
+        setFormData(prev => {
+            const isSelected = prev.pinned_badges.includes(badgeId);
+            if (isSelected) {
+                return { ...prev, pinned_badges: prev.pinned_badges.filter(id => id !== badgeId) };
+            } else {
+                if (prev.pinned_badges.length >= 3) return prev;
+                return { ...prev, pinned_badges: [...prev.pinned_badges, badgeId] };
+            }
+        });
+    };
+
+    const handleSaveSettings = async () => {
+        if (!user) return;
+        setIsSaving(true);
+
+        try {
+            const updates: Promise<any>[] = [];
+            const targetId = user.id;
+
+            if (formData.username.trim() !== (user.username || "").trim()) {
+                updates.push(userService.updateUserName(targetId, formData.username.trim()));
+            }
+
+            if (formData.handle.trim() !== (user.handle || "").trim()) {
+                updates.push(userService.updateUserHandle(targetId, formData.handle.trim()));
+            }
+
+            if (formData.email.trim().toLowerCase() !== (user.email || "").trim().toLowerCase()) {
+                updates.push(userService.updateUserEmail(targetId, formData.email.trim()));
+            }
+
+            if (formData.bio !== (user.bio || "")) {
+                updates.push(userService.updateUserBio(targetId, formData.bio));
+            }
+
+            if (formData.avatar !== (user.avatar || "")) {
+                updates.push(userService.updateUserAvatar(targetId, formData.avatar));
+            }
+
+            if (Number(formData.theme) !== Number(user.theme)) {
+                updates.push(userService.updateUserTheme(targetId, Number(formData.theme)));
+            }
+
+            if (formData.password && formData.password.trim() !== "") {
+                updates.push(userService.updateUserPassword(targetId, formData.password));
+            }
+
+            const origPinned = safeParseJSON<number[]>(user.pinned_badges, []).sort();
+            const newPinned = [...formData.pinned_badges].sort();
+
+            if (JSON.stringify(origPinned) !== JSON.stringify(newPinned)) {
+                updates.push(userService.updateUserPinnedBadges(targetId, formData.pinned_badges));
+            }
+
+            if (updates.length === 0) {
+                setIsSettingsOpen(false);
+                return;
+            }
+
+            await Promise.all(updates);
+
+            if (!isOwner && isAdmin) {
+                try {
+                    await notificationService.createNotification(
+                        targetId,
+                        "Profile modified",
+                        "An administrator has modified your profile information.",
+                        "admin_action"
+                    );
+                } catch (notifErr) {
+                    console.error("Failed to send notification:", notifErr);
+                }
+            }
+
+            setIsSettingsOpen(false);
+            fetchUserData();
+        } catch (err) {
+            console.error(err);
+            alert("An error occurred while saving: " + getErrorMessage(err));
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        if (!confirm("WARNING: Are you sure you want to delete this account? This action is irreversible!")) return;
+
+        try {
+            if (!user?.id) return;
+
+            await userService.deleteUser(user.id);
+
+            if (isOwner) {
+                contextLogout();
+                navigate("/");
+            } else {
+                navigate("/admin");
+            }
+        } catch (err) {
+            alert("An error occurred while deleting the account: " + getErrorMessage(err));
+        }
+    };
+
+    const accent = THEME_COLORS[colorIndex] || THEME_COLORS[0];
+    const a = accent.hex;
+    const g = accent.glow;
+    const d = accent.dark;
+
+    const currentPinnedIds = safeParseJSON<number[]>(user?.pinned_badges, []);
+
+    if (loading) return <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">Loading...</div>;
+    if (error) return <div className="min-h-screen bg-[#050505] text-red-500 flex items-center justify-center">Error: {error}</div>;
+    if (!user) return null;
 
     return (
-        <div style={{ background: `radial-gradient(ellipse at 60% 0%, ${d} 0%, #101010 55%, #000 100%)`, minHeight: "100vh" }}>
-
-            <div style={{ background: "#050505", borderBottom: "1px solid #1a1a1a", padding: "10px 24px", display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ display: "flex", gap: 6 }}>
-                    {ACCENT_COLORS.map((c, i) => (
-                        <button
-                            key={c.name}
-                            onClick={() => setColorIndex(i)}
-                            title={c.name}
-                            style={{
-                                width: 18, height: 18, borderRadius: "50%",
-                                background: c.hex,
-                                border:     colorIndex === i ? "2px solid #fff" : "2px solid #222",
-                                boxShadow:  colorIndex === i ? `0 0 8px ${c.glow}` : "none",
-                                cursor: "pointer", padding: 0,
-                            }}
-                        />
-                    ))}
-                </div>
-                <span style={{ color: a, fontSize: 12, fontWeight: 700, minWidth: 56, textAlign: "right", textShadow: `0 0 8px ${g}` }}>
-                    {ACCENT_COLORS[colorIndex].name}
-                </span>
-            </div>
-
-            <div className="container mx-auto px-4 sm:px-8 h-fit max-w-7xl">
+        <div className="min-h-screen pb-10" style={{ background: `radial-gradient(ellipse at 60% 0%, ${d} 0%, #101010 55%, #000 100%)` }}>
+            <div className="container mx-auto px-4 sm:px-8 h-fit max-w-7xl pt-8">
                 <div className="flex flex-col w-full gap-4 rounded-4xl pb-4">
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8 rounded-t-4xl rounded-b-xl relative overflow-hidden"
+                        style={{ background: `linear-gradient(135deg, #111 0%, ${d} 60%, #0d0d0d 100%)`, borderBottom: `1px solid ${a}33` }}>
 
-                    <div
-                        className="flex items-center gap-8 p-8 rounded-t-4xl relative"
-                        style={{
-                            background:   `linear-gradient(135deg, #111 0%, ${d} 60%, #0d0d0d 100%)`,
-                            borderBottom: `1px solid ${a}33`,
-                        }}
-                    >
-                        <div style={{
-                            position: "absolute", inset: 0, borderRadius: "inherit", pointerEvents: "none",
-                            backgroundImage: `linear-gradient(${a}08 1px, transparent 1px), linear-gradient(90deg, ${a}08 1px, transparent 1px)`,
-                            backgroundSize: "40px 40px",
-                        }} />
+                        <div className="absolute inset-0 pointer-events-none"
+                            style={{ backgroundImage: `linear-gradient(${a}08 1px, transparent 1px), linear-gradient(90deg, ${a}08 1px, transparent 1px)`, backgroundSize: "40px 40px" }} />
 
-                        <Avatar
-                            className="sm:w-50 sm:h-50 w-35 h-35 z-10"
-                            style={{ border: `3px solid ${a}66`, boxShadow: `0 0 32px ${g}` }}
-                        >
-                            <AvatarImage src={USER.avatarSrc} />
-                            <AvatarFallback style={{ background: "#111", color: a }}>
-                                {USER.name.split(" ").map(n => n[0]).join("")}
+                        <Avatar className="sm:w-48 sm:h-48 w-32 h-32 z-10 shrink-0" style={{ border: `3px solid ${a}66`, boxShadow: `0 0 32px ${g}` }}>
+                            <AvatarImage src={user.avatar || undefined} className="object-cover" />
+                            <AvatarFallback className="bg-[#111] text-4xl" style={{ color: a }}>
+                                {user.username.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
 
-                        <div className="flex flex-col gap-1 z-10 text-white">
-                            <div className="flex items-center gap-2">
-                                <h1 className="font-extrabold text-4xl tracking-wide drop-shadow-md" style={{ color: "#e8e8e8" }}>
-                                    {USER.name}
-                                </h1>
-                                <BadgeCheck size={30} style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
+                        <div className="flex flex-col gap-2 z-10 text-white w-full text-center md:text-left mt-4 md:mt-0">
+                            <div className="flex items-center justify-center md:justify-start gap-2">
+                                <h1 className="font-extrabold text-4xl tracking-wide drop-shadow-md text-[#e8e8e8]">{user.username}</h1>
+                                {user.verified === 1 && (
+                                    <BadgeCheck size={28} style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
+                                )}
+                                {user.admin === 1 && (
+                                    <span className="text-xs px-2 py-1 rounded-md bg-red-600 font-bold ml-2">ADMIN</span>
+                                )}
                             </div>
-                            <p className="font-semibold tracking-wider" style={{ color: "#555" }}>{USER.handle}</p>
-                            <div className="flex flex-wrap gap-2 mt-4">
-                                <Button
-                                    className="p-5 font-bold border-2 text-sm rounded-4xl cursor-pointer shadow-lg transition-all"
-                                    style={{ background: a, color: "#000", border: "none", boxShadow: `0 0 18px ${g}` }}
-                                >
-                                    Settings <Settings className="w-4 h-4" />
-                                </Button>
+                            <p className="font-semibold tracking-wider text-[#777]">@{user.handle}</p>
+
+                            <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
+                                {canEdit ? (
+                                    <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
+                                        <DialogTrigger asChild>
+                                            <Button className="px-6 py-5 font-bold text-sm rounded-full cursor-pointer shadow-lg transition-all border-none"
+                                                style={{ background: a, color: "#000", boxShadow: `0 0 15px ${g}` }}>
+                                                Edit Profile <Settings className="w-4 h-4 ml-2" />
+                                            </Button>
+                                        </DialogTrigger>
+
+                                        <DialogContent className="sm:max-w-125 bg-[#111] text-white border border-[#333] shadow-2xl">
+                                            <DialogHeader>
+                                                <DialogTitle className="text-2xl" style={{ color: a }}>
+                                                    Profile Settings {isAdmin && !isOwner && <span className="text-sm font-normal text-gray-400">(Admin Edit)</span>}
+                                                </DialogTitle>
+                                                <DialogDescription className="text-gray-400">Modify your information. Click the save button to finalize changes.</DialogDescription>
+                                            </DialogHeader>
+
+                                            <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="username">Username</Label>
+                                                    <Input id="username" className="bg-[#222] border-[#444]" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="handle">Handle</Label>
+                                                    <Input id="handle" className="bg-[#222] border-[#444]" value={formData.handle} onChange={(e) => setFormData({ ...formData, handle: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="email">Email</Label>
+                                                    <Input id="email" type="email" className="bg-[#222] border-[#444]" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="avatar">Avatar URL</Label>
+                                                    <Input id="avatar" className="bg-[#222] border-[#444]" placeholder="https://..." value={formData.avatar} onChange={(e) => setFormData({ ...formData, avatar: e.target.value })} />
+                                                </div>
+                                                <div className="grid gap-2">
+                                                    <Label htmlFor="bio">Bio</Label>
+                                                    <Textarea id="bio" className="bg-[#222] border-[#444] resize-none h-24" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} />
+                                                </div>
+
+                                                <div className="grid gap-2 mt-2">
+                                                    <Label>Theme Color</Label>
+                                                    <div className="flex gap-3 flex-wrap">
+                                                        {THEME_COLORS.map((c) => (
+                                                            <button key={c.id} title={c.name} type="button" onClick={() => setFormData({ ...formData, theme: c.id })}
+                                                                className="w-8 h-8 rounded-full cursor-pointer transition-all"
+                                                                style={{ background: c.hex, border: formData.theme === c.id ? "3px solid #fff" : "2px solid transparent", boxShadow: formData.theme === c.id ? `0 0 10px ${c.glow}` : "none" }} />
+                                                        ))}
+                                                    </div>
+                                                </div>
+
+                                                <div className="grid gap-2 mt-2">
+                                                    <Label htmlFor="password">New Password</Label>
+                                                    <Input id="password" type="password" className="bg-[#222] border-[#444]" placeholder="Leave blank if not changing..." value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                                                </div>
+
+                                                <div className="grid gap-2 mt-2">
+                                                    <Label>Pinned Badges (Max 3)</Label>
+                                                    <div className="flex flex-wrap gap-2 p-3 bg-[#222] rounded-lg border border-[#444] min-h-16">
+                                                        {badgeDetails.length > 0 ? badgeDetails.map((badge) => {
+                                                            const isSelected = formData.pinned_badges.includes(badge.id);
+                                                            return (
+                                                                <img key={badge.id} alt={badge.title} src={badge.image} title={badge.title} onClick={() => togglePinnedBadge(badge.id)}
+                                                                    className="w-10 h-10 rounded-md cursor-pointer transition-all object-cover"
+                                                                    style={{ border: isSelected ? `2px solid ${a}` : "2px solid transparent", opacity: isSelected ? 1 : 0.4, boxShadow: isSelected ? `0 0 10px ${g}` : "none" }} />
+                                                            );
+                                                        }) : (
+                                                            <span className="text-xs text-gray-500">No pinned badges available.</span>
+                                                        )}
+                                                    </div>
+                                                    <span className="text-xs text-right text-gray-400 font-mono">{formData.pinned_badges.length} / 3 selected</span>
+                                                </div>
+                                            </div>
+
+                                            <DialogFooter className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 mt-4 pt-4 border-t border-[#333]">
+                                                <Button variant="destructive" onClick={handleDeleteAccount} className="w-full sm:w-auto flex items-center gap-2">
+                                                    <Trash2 className="w-4 h-4" /> Delete Account
+                                                </Button>
+                                                <Button onClick={handleSaveSettings} disabled={isSaving} className="w-full sm:w-auto bg-white text-black hover:bg-gray-200">
+                                                    {isSaving ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save</>}
+                                                </Button>
+                                            </DialogFooter>
+                                        </DialogContent>
+                                    </Dialog>
+                                ) : (
+                                    <Button className="px-6 py-5 font-bold text-sm rounded-full cursor-pointer transition-all border-none bg-[#222] text-white hover:bg-[#333]">
+                                        Message <MessageCircle className="w-4 h-4 ml-2" />
+                                    </Button>
+                                )}
                             </div>
                         </div>
 
-                        <div className="hidden lg:flex flex-col items-center ml-auto z-10 gap-4">
-                            {[`Explorer Lvl. ${USER.level}`, `Reputation: ${USER.reputation}`].map(label => (
-                                <h2
-                                    key={label}
-                                    className="text-xl font-bold tracking-widest rounded-2xl p-2 w-full text-center"
-                                    style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 10px ${g}` }}
-                                >
-                                    {label}
-                                </h2>
-                            ))}
-                            <div className="flex items-center gap-2">
-                                {[Award, Plane, MapPin].map((Icon, i) => (
-                                    <IconCircle key={i} Icon={Icon} a={a} g={g} />
-                                ))}
+                        <div className="hidden lg:flex flex-col items-center justify-center ml-auto z-10 gap-3 min-w-50">
+                            <div className="text-lg font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 8px ${g}` }}>Lvl. {user.level}</div>
+                            <div className="text-lg font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 8px ${g}` }}>REP: {user.reputation}</div>
+
+                            <div className="flex items-center justify-center gap-2 mt-2">
+                                {badgeDetails
+                                    .filter(b => currentPinnedIds.includes(b.id))
+                                    .map(badge => (
+                                        <img key={`pinned-${badge.id}`} alt={badge.title} src={badge.image} title={badge.title} className="rounded-xl w-10 h-10 object-cover" style={{ background: `${a}18`, boxShadow: `0 0 12px ${g}` }} />
+                                    ))}
                             </div>
                         </div>
                     </div>
 
-                    <div className="flex flex-col lg:flex-row gap-4 px-4 pb-4">
+                    <div className="flex flex-col lg:flex-row gap-4 px-4 pb-4 mt-2">
+                        {/* Travel Log */}
                         <div className="flex-1">
-                            <TravelLog a={a} g={g} />
+                            <div className="h-full min-h-100 p-6 sm:p-8 rounded-3xl" style={{ background: "linear-gradient(160deg, #111 0%, #0d0d0d 100%)", border: `1px solid ${a}22` }}>
+                                <div className="flex items-center gap-3 mb-6 pb-4" style={{ borderBottom: `1px solid ${a}22` }}>
+                                    <Footprints className="w-7 h-7" style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
+                                    <h2 className="font-bold text-2xl tracking-wider text-[#e8e8e8]">Travel Log</h2>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="flex gap-4 p-5 rounded-2xl transition-colors bg-[#151515] hover:bg-[#1a1a1a]" style={{ border: `1px solid ${a}1a` }}>
+                                        <div className="p-3 rounded-xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}><MapPin className="w-5 h-5" style={{ color: a }} /></div>
+                                        <div className="flex-1">
+                                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                                <h3 className="font-bold text-md text-white">Checked in at Budapest</h3>
+                                                <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit">2 hours ago</span>
+                                            </div>
+                                            <p className="mt-2 text-sm text-gray-400">Visiting the Parliament building. The architecture is absolutely stunning! 🏛️</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="flex flex-col lg:w-100 gap-4">
-                            <AboutMe a={a} />
-                            <Achievements a={a} g={g} />
+
+                        {/* About Me & Badges */}
+                        <div className="flex flex-col lg:w-96 gap-4">
+                            <div className="p-6 h-full min-h-100 rounded-3xl bg-[linear-gradient(160deg,#111_0%,#0d0d0d_100%)] border flex flex-col" style={{ borderColor: `${a}22` }}>
+                                <h2 className="text-center font-bold text-xl tracking-wider mb-4 flex items-center justify-center gap-2 text-white pb-4 border-b border-[#222]">
+                                    <Quote className="w-5 h-5 text-transparent" style={{ fill: `${a}50` }} /> About Me
+                                </h2>
+                                <p className="font-medium text-md text-center leading-relaxed text-gray-300 flex-1">
+                                    {user.bio || <span className="italic text-gray-600">No Bio yet.</span>}
+                                </p>
+                                <div className="mt-8 pt-4 border-t border-[#222]">
+                                    <h3 className="text-center text-sm text-gray-500 font-bold mb-4 uppercase tracking-widest">Badges</h3>
+                                    <div className="flex flex-wrap justify-center gap-3">
+                                        {badgeDetails.length > 0 ? badgeDetails.map((badge) => (
+                                            <img key={badge.id} alt={badge.title} src={badge.image} title={badge.title} className="rounded-xl border border-[#333] w-14 h-14 object-cover" style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} />
+                                        )) : (
+                                            <span className="text-xs text-gray-600">No badges available.</span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
-    )
+    );
 }

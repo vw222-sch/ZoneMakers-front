@@ -3,7 +3,7 @@ import { Link } from "react-router";
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 
-import { MapPinned, Map, MessagesSquare, CalendarDays, HelpCircle } from 'lucide-react';
+import { Map, MessagesSquare, CalendarDays, HelpCircle } from 'lucide-react';
 
 export default function Footer() {
     return (
@@ -12,7 +12,7 @@ export default function Footer() {
           <div className="flex flex-col items-center justify-between gap-6 sm:flex-row">
             {/* Logo */}
             <Link to="/" className="inline-flex items-center gap-2 text-2xl font-bold tracking-tight">
-              <MapPinned className="w-8 h-8" />
+              <img src="/ZM-Official.png" alt="ZM" className="w-10 h-10" />
               ZoneMakers
             </Link>
             <div className="flex flex-wrap justify-center items-center gap-2">

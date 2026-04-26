@@ -1,6 +1,8 @@
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Button } from "@/components/ui/button"
-import { Textarea } from "@/components/ui/textarea"
+import { useState } from "react";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
     Select,
     SelectContent,
@@ -9,69 +11,173 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
+
+import { createSupportTicket } from "@/services/supportService";
+import { getErrorMessage } from "@/lib/api";
+import { useAuth } from "@/hooks/AuthContext";
 
 export default function Support() {
+    const { state } = useAuth();
+    const isLoggedIn = state.isLoggedIn;
+
+    const [formData, setFormData] = useState({
+        subject: "",
+        topic: "",
+        description: ""
+    });
+
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [status, setStatus] = useState<{ type: "success" | "error" | null; message: string }>({
+        type: null,
+        message: ""
+    });
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        setStatus({ type: null, message: "" });
+
+        if (!formData.topic) {
+            setStatus({ type: "error", message: "Please select a topic from the dropdown!" });
+            return;
+        }
+        if (!formData.subject.trim()) {
+            setStatus({ type: "error", message: "Please enter the subject of your message!" });
+            return;
+        }
+        if (!formData.description.trim()) {
+            setStatus({ type: "error", message: "Please describe your issue in detail!" });
+            return;
+        }
+
+        if (!isLoggedIn) {
+            setStatus({ type: "error", message: "You are not logged in! Please log in to use the support feature." });
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const payload = {
+                subject: formData.subject,
+                topic: Number(formData.topic),
+                description: formData.description
+            };
+
+            await createSupportTicket(payload);
+
+            setStatus({
+                type: "success",
+                message: "Your message has been sent successfully! We will contact you soon."
+            });
+
+            setFormData({ subject: "", topic: "", description: "" });
+        } catch (error: unknown) {
+            console.error("Support API error:", error);
+            setStatus({
+                type: "error",
+                message: getErrorMessage(error)
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     return (
-        <>
-            <div className="container mx-auto max-w-6xl px-4 min-h-screen">
-                <h1 className="fl-text-4xl/6xl font-bold tracking-widest text-center my-16">Support</h1>
+        <div className="container mx-auto max-w-6xl px-4 min-h-screen">
+            <h1 className="fl-text-4xl/6xl font-bold tracking-widest text-center my-16">
+                Support
+            </h1>
+
+            <form onSubmit={handleSubmit}>
                 <FieldGroup className="gap-6">
                     <Field>
-                        <FieldLabel className="text-base font-bold tracking-wide">Subject</FieldLabel>
-
-                        <Select>
+                        <FieldLabel className="text-base font-bold tracking-wide">Topic</FieldLabel>
+                        <Select
+                            value={formData.topic}
+                            onValueChange={(value) => setFormData({ ...formData, topic: value })}
+                        >
                             <SelectTrigger className="w-full h-10!">
                                 <SelectValue placeholder="Select a reason" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
                                     <SelectLabel>Technical Support</SelectLabel>
-                                    <SelectItem value="bug">Report a Bug</SelectItem>
-                                    <SelectItem value="display">Display/UI Issue</SelectItem>
-                                    <SelectItem value="broken_link">Broken Link</SelectItem>
-                                    <SelectItem value="mobile">Mobile Issue</SelectItem>
-                                    <SelectItem value="error_msg">Error Message</SelectItem>
+                                    <SelectItem value="1">Report a Bug</SelectItem>
+                                    <SelectItem value="2">Display/UI Issue</SelectItem>
+                                    <SelectItem value="3">Broken Link</SelectItem>
+                                    <SelectItem value="4">Mobile Issue</SelectItem>
+                                    <SelectItem value="5">Error Message</SelectItem>
                                 </SelectGroup>
                                 <SelectGroup>
                                     <SelectLabel>Account & Security</SelectLabel>
-                                    <SelectItem value="login">Login Issue</SelectItem>
-                                    <SelectItem value="password">Password Reset</SelectItem>
-                                    <SelectItem value="profile">Profile Settings</SelectItem>
-                                    <SelectItem value="hacked">Compromised Account</SelectItem>
+                                    <SelectItem value="6">Login Issue</SelectItem>
+                                    <SelectItem value="7">Password Reset</SelectItem>
+                                    <SelectItem value="8">Profile Settings</SelectItem>
+                                    <SelectItem value="9">Compromised Account</SelectItem>
                                 </SelectGroup>
                                 <SelectGroup>
                                     <SelectLabel>Report Abuse</SelectLabel>
-                                    <SelectItem value="spam">Spam</SelectItem>
-                                    <SelectItem value="harassment">Harassment/Bullying</SelectItem>
-                                    <SelectItem value="impersonation">Impersonation</SelectItem>
-                                    <SelectItem value="offensive">Inappropriate Content</SelectItem>
-                                    <SelectItem value="scam">
-                                        Fraud or Scam
-                                    </SelectItem>
+                                    <SelectItem value="10">Spam</SelectItem>
+                                    <SelectItem value="11">Harassment/Bullying</SelectItem>
+                                    <SelectItem value="12">Impersonation</SelectItem>
+                                    <SelectItem value="13">Inappropriate Content</SelectItem>
+                                    <SelectItem value="14">Fraud or Scam</SelectItem>
                                 </SelectGroup>
                                 <SelectGroup>
                                     <SelectLabel>Other</SelectLabel>
-                                    <SelectItem value="feedback">General Feedback</SelectItem>
-                                    <SelectItem value="feature">Feature Request</SelectItem>
+                                    <SelectItem value="15">General Feedback</SelectItem>
+                                    <SelectItem value="16">Feature Request</SelectItem>
                                 </SelectGroup>
                             </SelectContent>
                         </Select>
                     </Field>
 
                     <Field>
-                        <FieldLabel htmlFor="textarea-message" className="text-base font-bold tracking-wide">Give us more detail (optional)</FieldLabel>
-                        <Textarea id="textarea-message" placeholder="Type your message here." className="h-40" />
+                        <FieldLabel htmlFor="input-subject" className="text-base font-bold tracking-wide">
+                            Subject
+                        </FieldLabel>
+                        <Input
+                            id="input-subject"
+                            placeholder="Describe the issue..."
+                            value={formData.subject}
+                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                        />
                     </Field>
 
                     <Field>
-                        <Button type="submit" className="w-full p-5 text-base font-bold tracking-wide cursor-pointer">Send Message</Button>
+                        <FieldLabel htmlFor="textarea-message" className="text-base font-bold tracking-wide">
+                            Description
+                        </FieldLabel>
+                        <Textarea
+                            id="textarea-message"
+                            placeholder="Describe the issue in detail..."
+                            value={formData.description}
+                            className="h-40"
+                            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                        />
+                    </Field>
+
+                    {status.message && (
+                        <div className={`p-4 rounded-xl font-bold text-center border ${status.type === "success"
+                            ? "bg-green-500/10 text-green-400 border-green-500/30"
+                            : "bg-red-500/10 text-red-400 border-red-500/30"
+                            }`}>
+                            {status.message}
+                        </div>
+                    )}
+
+                    <Field>
+                        <Button
+                            type="submit"
+                            disabled={isSubmitting}
+                            className="w-full p-5 text-base font-bold tracking-wide cursor-pointer"
+                        >
+                            {isSubmitting ? "Sending..." : "Send Message"}
+                        </Button>
                     </Field>
                 </FieldGroup>
-            </div>
-
-
-
-        </>
+            </form>
+        </div>
     );
 }

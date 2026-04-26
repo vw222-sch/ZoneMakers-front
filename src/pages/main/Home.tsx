@@ -3,7 +3,7 @@ import { Globe } from "@/components/ui/globe";
 import { Button } from '@/components/ui/button';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 
-import { BadgeAlert, ShieldCheck, ArrowRight, Navigation } from 'lucide-react';
+import { BadgeAlert, ShieldCheck, Navigation } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -35,7 +35,7 @@ export default function Home() {
             </div>
             <h2 className="fl-text-4xl/6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
               Explore with <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-blue-600 to-cyan-500">
                 zero anxiety.
               </span>
             </h2>
@@ -56,7 +56,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kép - Kompozíció, nem sima téglalap */}
           <div className="lg:w-1/2">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl">
               <img
@@ -64,7 +63,6 @@ export default function Home() {
                 alt="Happy tourist"
                 className="w-full h-auto object-cover aspect-4/3"
               />
-              {/* Floating Badge */}
               <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border flex items-center gap-3">
                 <div className="bg-green-100 p-2 rounded-full text-green-600">
                   <Navigation className="size-5" />
@@ -79,7 +77,6 @@ export default function Home() {
         </div>
 
         <div className="flex flex-col lg:flex-row gap-16 items-center">
-          {/* Kép - Kompozíció, nem sima téglalap */}
           <div className="lg:w-1/2">
             <div className="relative z-10 rounded-3xl overflow-hidden shadow-2xl">
               <img
@@ -87,7 +84,7 @@ export default function Home() {
                 alt="Map interface showing black zones"
                 className="w-full h-auto object-cover aspect-4/3"
               />
-              {/* Floating Badge */}
+
               <div className="absolute bottom-6 left-6 bg-white/90 backdrop-blur-md p-4 rounded-xl shadow-lg border flex items-center gap-3">
                 <div className="bg-red-100 p-2 rounded-full text-red-600">
                   <BadgeAlert className="size-5" />
@@ -106,7 +103,7 @@ export default function Home() {
             </div>
             <h2 className="fl-text-4xl/6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
               See the <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-600 to-rose-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-red-600 to-rose-500">
                 invisible dangers.
               </span>
             </h2>
@@ -135,7 +132,7 @@ export default function Home() {
             </div>
             <h2 className="fl-text-4xl/6xl font-extrabold tracking-tight mb-6 leading-[1.1]">
               Powered by travelers, <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-lime-500">
+              <span className="text-transparent bg-clip-text bg-linear-to-r from-green-600 to-lime-500">
                 for travelers.
               </span>
             </h2>
@@ -156,7 +153,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Kép - Kompozíció, nem sima téglalap */}
           <div className="lg:w-1/2">
             <div className="rounded-3xl overflow-hidden shadow-2xl">
               <img
@@ -168,7 +164,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
 
       {/* --- FAQ SECTION --- */}
       <section className="py-24 bg-background">

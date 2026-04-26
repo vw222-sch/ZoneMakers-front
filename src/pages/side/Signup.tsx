@@ -4,48 +4,35 @@ import { Button } from "@/components/ui/button"
 import { MapPinned } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 import { useState } from "react"
+import * as authService from "@/services/authService"
+import { useAuth } from "@/hooks/AuthContext"
+import { getErrorMessage } from "@/lib/api"
 
 export default function Signup() {
+  const { login } = useAuth();
+
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
   const navigate = useNavigate()
 
-  async function handleSubmit(e: React.SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setError(null)
     setLoading(true)
 
     try {
-      const res = await fetch("http://localhost:3000/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ username, email, password }),
-      })
+      const { token, id } = await authService.signup(username, email, password)
+      const userData = await authService.fetchUserData(id)
 
-      const data = await res.json().catch(() => ({}))
-
-      if (!res.ok) {
-        setError((data && (data.message || data.error)) || `Signup failed (${res.status})`)
-        return
-      }
-
-      // Store token if returned
-      const token = data?.token ?? data?.accessToken ?? null
-      if (token) {
-        localStorage.setItem("authToken", token)
-      } else {
-        localStorage.setItem("authData", JSON.stringify(data))
-      }
-
-      // Navigate to home or login after successful signup
+      login(token, id, userData)
       navigate("/")
-    } catch (err: any) {
-      setError(err?.message || "Network error")
+
+    } catch (err: unknown) {
+      setError(getErrorMessage(err))
     } finally {
       setLoading(false)
     }
@@ -53,9 +40,9 @@ export default function Signup() {
 
   return (
     <div className="flex items-center justify-center h-screen px-4">
-      <div className="border-2 border-black w-md h-fit p-4 rounded-2xl items-center justify-center">
+      <div className="border-2 border-black w-md h-fit p-4 rounded-2xl items-center justify-center bg-white shadow-lg">
         <Link to="/">
-          <h1 className="flex items-center gap-2 text-3xl justify-center font-extrabold mt-4 mb-8">
+          <h1 className="flex items-center gap-2 text-3xl justify-center font-extrabold mt-4 mb-8 text-black hover:opacity-80 transition">
             <MapPinned size={50} />
             ZoneMakers
           </h1>
@@ -105,12 +92,12 @@ export default function Signup() {
             </Field>
 
             {error && (
-              <div role="alert" className="text-sm text-red-600">
+              <div role="alert" className="text-sm text-red-600 font-semibold text-center bg-red-50 p-2 rounded-md">
                 {error}
               </div>
             )}
 
-            <Field orientation="horizontal" className="flex flex-col">
+            <Field orientation="horizontal" className="flex flex-col mt-2">
               <Button type="submit" className="w-full p-5 text-base font-bold tracking-wide cursor-pointer" disabled={loading}>
                 {loading ? "Signing up..." : "Sign up"}
               </Button>

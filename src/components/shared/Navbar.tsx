@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { Link } from "react-router";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
@@ -7,20 +7,10 @@ import { Sheet, SheetClose, SheetContent, SheetFooter, SheetHeader, SheetTitle, 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-import { Map, MessagesSquare, CalendarDays, HelpCircle, MapPinned, CircleUser, Bell, Shield, BadgeCheck, SettingsIcon, LogOut, PanelLeft } from "lucide-react";
+import { Map, MessagesSquare, CalendarDays, HelpCircle, CircleUser, Bell, Shield, BadgeCheck, LogOut, PanelLeft } from "lucide-react";
 
-import {
-    Dialog,
-    DialogClose,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger
-} from '@/components/ui/dialog'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useAuth } from "@/hooks/AuthContext";
+import { fetchNotifications } from "@/services/notificationService";
 
 const NAV_ITEMS = [
     { icon: Map, title: 'Map', href: '/map' },
@@ -29,14 +19,43 @@ const NAV_ITEMS = [
     { icon: HelpCircle, title: 'Support', href: '/support' },
 ];
 
-const USER_DATA = {
-    name: "John Doe",
-    email: "johndoe@example.com",
-    avatar: "https://github.com/shadcn.png",
-};
-
 export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
-    const [isLoggedIn, setIsLoggedIn] = useState(true);
+    const navigate = useNavigate();
+    const { state, logout: handleContextLogout } = useAuth();
+
+    const isLoggedIn = state.isLoggedIn;
+    const user = state.user;
+    const isAdmin = state.isAdmin;
+
+    const [unreadCount, setUnreadCount] = useState<number>(0);
+
+    useEffect(() => {
+        if (!isLoggedIn) {
+            setUnreadCount(0);
+            return;
+        }
+
+        const loadNotifications = async () => {
+            try {
+                const notifs = await fetchNotifications();
+                const unread = notifs.filter(n => !n.read).length;
+                setUnreadCount(unread);
+            } catch (err) {
+                console.error("Hiba az értesítések lekérdezésekor:", err);
+            }
+        };
+
+        loadNotifications();
+
+        const interval = setInterval(loadNotifications, 60000);
+
+        return () => clearInterval(interval);
+    }, [isLoggedIn]);
+
+    const handleLogout = () => {
+        handleContextLogout();
+        navigate("/");
+    };
 
     return (
         <TooltipProvider>
@@ -45,7 +64,7 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                 ${isOpen ? 'translate-x-0' : '-translate-x-full'}
             `}>
                 <Link to="/" className="mb-16">
-                    <MapPinned size={30} />
+                    <img src="/ZM-Official.png" alt="ZM" className="w-10 h-10" />
                 </Link>
 
                 <div className="flex flex-1 flex-col gap-8 w-full items-center">
@@ -64,28 +83,39 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                 </div>
 
                 <div className="flex flex-col items-center gap-6">
-                    {isLoggedIn ? (
+                    {isLoggedIn && user ? (
                         <>
                             <Tooltip>
                                 <TooltipTrigger asChild>
-                                    <Link to="/notifications"><Bell size={30} /></Link>
+                                    <Link to="/notifications" className="relative">
+                                        <Bell size={30} />
+                                        {unreadCount > 0 && (
+                                            <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                                {unreadCount > 9 ? '9+' : unreadCount}
+                                            </span>
+                                        )}
+                                    </Link>
                                 </TooltipTrigger>
                                 <TooltipContent side="right"><p className="font-bold text-sm">Notifications</p></TooltipContent>
                             </Tooltip>
 
-                            <Tooltip>
-                                <TooltipTrigger asChild>
-                                    <Link to="/admin"><Shield size={30} /></Link>
-                                </TooltipTrigger>
-                                <TooltipContent side="right"><p className="font-bold text-sm">Admin</p></TooltipContent>
-                            </Tooltip>
+                            {isAdmin && (
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Link to="/admin"><Shield size={30} /></Link>
+                                    </TooltipTrigger>
+                                    <TooltipContent side="right">
+                                        <p className="font-bold text-sm">Admin</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            )}
 
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                     <Button variant='ghost' size='icon' className='rounded-full border-2 cursor-pointer'>
                                         <Avatar className="h-full w-full">
-                                            <AvatarImage src={USER_DATA.avatar} alt={USER_DATA.name} />
-                                            <AvatarFallback>CN</AvatarFallback>
+                                            <AvatarImage src={user?.avatar || undefined} alt={user?.username} />
+                                            <AvatarFallback>{user?.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
                                         </Avatar>
                                     </Button>
                                 </DropdownMenuTrigger>
@@ -93,22 +123,32 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                                     <DropdownMenuLabel className="p-0 font-normal">
                                         <div className="flex items-center gap-2 p-1 text-left text-sm">
                                             <Avatar className="h-8 w-8 rounded-full">
-                                                <AvatarImage src={USER_DATA.avatar} alt={USER_DATA.name} />
-                                                <AvatarFallback>CN</AvatarFallback>
+                                                <AvatarImage src={user?.avatar || undefined} alt={user?.username} />
+                                                <AvatarFallback>{user?.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
                                             </Avatar>
                                             <div className="grid flex-1 text-left text-sm leading-tight">
-                                                <span className="truncate font-medium">{JSON.parse(localStorage.getItem("userData") ?? "{}").username}</span>
-                                                <span className="truncate text-xs">@{JSON.parse(localStorage.getItem("userData") ?? "{}").handle}</span>
+                                                <span className="truncate font-medium">{user?.username}</span>
+                                                <span className="truncate text-xs">@{user?.handle}</span>
                                             </div>
                                         </div>
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator />
                                     <DropdownMenuGroup>
-                                        <DropdownMenuItem className='cursor-pointer'><BadgeCheck className="mr-2 h-4 w-4" /> Account</DropdownMenuItem>
-                                        <DropdownMenuItem className='cursor-pointer'><Bell className="mr-2 h-4 w-4" /> Notifications</DropdownMenuItem>
+                                        <DropdownMenuItem className='cursor-pointer' onClick={() => navigate(`/user-details/${user?.id}`)}>
+                                            <BadgeCheck className="mr-2 h-4 w-4" /> Account
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem className='cursor-pointer' onClick={() => navigate("/notifications")}>
+                                            <Bell className="mr-2 h-4 w-4" /> Notifications {unreadCount > 0 && `(${unreadCount})`}
+                                        </DropdownMenuItem>
+
+                                        {isAdmin && (
+                                            <DropdownMenuItem className='cursor-pointer' onClick={() => navigate("/admin")}>
+                                                <Shield className="mr-2 h-4 w-4" /> Admin Dashboard
+                                            </DropdownMenuItem>
+                                        )}
                                     </DropdownMenuGroup>
                                     <DropdownMenuSeparator />
-                                    <DropdownMenuItem variant='destructive' className='cursor-pointer' onClick={() => setIsLoggedIn(false)}>
+                                    <DropdownMenuItem variant='destructive' className='cursor-pointer' onClick={handleLogout}>
                                         <LogOut className="mr-2 h-4 w-4" /> Log out
                                     </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -128,7 +168,7 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
             {/* Mobile view */}
             <nav className="md:hidden fixed top-0 left-0 w-full h-20 border-b-2 px-4 bg-background z-40 flex items-center justify-between shadow-sm">
                 <Link to="/">
-                    <MapPinned size={35} />
+                    <img src="/ZM-Official.png" alt="ZM" className="w-10 h-10" />
                 </Link>
 
                 <Sheet>
@@ -140,7 +180,7 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                     <SheetContent side='right' className="flex flex-col">
                         <SheetHeader>
                             <SheetTitle className="flex justify-start">
-                                <MapPinned size={35} />
+                                <img src="/ZM-Official.png" alt="ZM" className="w-10 h-10" />
                             </SheetTitle>
                         </SheetHeader>
 
@@ -153,18 +193,52 @@ export default function Navbar({ isOpen = true }: { isOpen?: boolean }) {
                                     </Link>
                                 </SheetClose>
                             ))}
+
+                            {isLoggedIn && user ? (
+                                <>
+                                    <SheetClose asChild>
+                                        <Link to="/notifications" className="flex items-center gap-4 relative">
+                                            <Bell size={30} />
+                                            {unreadCount > 0 && (
+                                                <span className="absolute top-0 left-4 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                                </span>
+                                            )}
+                                            <span className="text-lg font-bold tracking-wide">Notifications</span>
+                                        </Link>
+                                    </SheetClose>
+
+                                    {isAdmin && (
+                                        <SheetClose asChild>
+                                            <Link to="/admin" className="flex items-center gap-4">
+                                                <Shield size={30} />
+                                                <span className="text-lg font-bold tracking-wide">Admin Dashboard</span>
+                                            </Link>
+                                        </SheetClose>
+                                    )}
+
+                                    <SheetClose asChild>
+                                        <Link to={`/user-details/${user.id}`} className="flex items-center gap-4">
+                                            <BadgeCheck size={30} />
+                                            <span className="text-lg font-bold tracking-wide">Account</span>
+                                        </Link>
+                                    </SheetClose>
+                                </>
+                            ) : null}
                         </div>
 
                         <SheetFooter className="mt-auto">
                             {isLoggedIn ? (
-                                <Button variant='destructive' onClick={() => setIsLoggedIn(false)} className="w-full font-bold text-base">
-                                    Log out
+                                <Button variant='destructive' onClick={handleLogout} className="w-full font-bold text-base">
+                                    <LogOut className="mr-2 h-5 w-5" /> Log out
                                 </Button>
                             ) : (
                                 <div className="flex flex-col gap-2 w-full">
-                                    <Button type='button' onClick={() => setIsLoggedIn(true)} className="w-full font-bold text-base">Login</Button>
                                     <SheetClose asChild>
-                                        <Button variant='outline' className="w-full font-bold text-base">Sign up</Button>
+                                        <Button type='button' onClick={() => navigate('/login')} className="w-full font-bold text-base">Login</Button>
+                                    </SheetClose>
+                                    <SheetClose asChild>
+                                        <Button variant='outline' onClick={() => navigate('/signup')} className="w-full font-bold text-base">Sign up</Button>
                                     </SheetClose>
                                 </div>
                             )}
