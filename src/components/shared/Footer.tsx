@@ -17,25 +17,25 @@ export default function Footer() {
             </Link>
             <div className="flex flex-wrap justify-center items-center gap-2">
               <Button asChild className="text-white font-extrabold tracking-widest rounded-2xl">
-                <Link to="#">
+                <Link to="/map">
                   <Map />
                   Map
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
-                <Link to="#">
+                <Link to="/chat">
                   <MessagesSquare />
                   Chat
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
-                <Link to="#">
+                <Link to="/news">
                   <CalendarDays />
                   News
                 </Link>
               </Button>
               <Button asChild className="font-extrabold tracking-widest rounded-2xl">
-                <Link to="#">
+                <Link to="/support">
                   <HelpCircle />
                   Support
                 </Link>

@@ -1,16 +1,19 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
-import { BadgeCheck, MessageCircle, MapPin, Quote, Footprints, Settings, Trash2, Save } from "lucide-react";
+import { BadgeCheck, MessageCircle, MapPin, Quote, Footprints, Settings, Trash2, Save, Plus } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogClose } from "@/components/ui/dialog";
 
-import type { User, BadgeData } from "@/types";
+import type { User, BadgeData, TravelLog } from "@/types";
+import { REGIONS, REGION_COLORS, getRegionById } from "@/types";
 import * as userService from "@/services/userService";
+import * as travelService from "@/services/travelService";
 import * as notificationService from "@/services/notificationService";
 import { useAuth } from "@/hooks/AuthContext";
 import { getErrorMessage } from "@/lib/api";
@@ -24,6 +27,13 @@ const THEME_COLORS = [
     { id: 6, name: "Yellow", hex: "#ffee44", glow: "#ffee0066", dark: "#1a1400" },
 ];
 
+const TRAVEL_TYPES = [
+    { value: "check_in", label: "Check-in" },
+    { value: "visit", label: "Visit" },
+    { value: "note", label: "Note" },
+    { value: "review", label: "Review" },
+];
+
 const safeParseJSON = <T,>(str: string | null | undefined | number[], fallback: T): T => {
     if (!str) return fallback;
     if (Array.isArray(str)) return str as T;
@@ -32,6 +42,21 @@ const safeParseJSON = <T,>(str: string | null | undefined | number[], fallback: 
     } catch {
         return fallback;
     }
+};
+
+const formatTimestamp = (ts: string) => {
+    const date = new Date(ts);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (mins < 1) return "Just now";
+    if (mins < 60) return `${mins}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+    return date.toLocaleDateString();
 };
 
 export default function UserDetails() {
@@ -53,6 +78,14 @@ export default function UserDetails() {
     const [isSettingsOpen, setIsSettingsOpen] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
+    // Travel log állapot
+    const [travelLogs, setTravelLogs] = useState<TravelLog[]>([]);
+    const [travelLoading, setTravelLoading] = useState(false);
+    const [travelDialogOpen, setTravelDialogOpen] = useState(false);
+    const [creatingTravel, setCreatingTravel] = useState(false);
+    const [deletingTravelId, setDeletingTravelId] = useState<number | null>(null);
+    const [newTravel, setNewTravel] = useState({ title: "", message: "", type: "check_in" });
+
     const [formData, setFormData] = useState({
         username: "",
         handle: "",
@@ -61,7 +94,8 @@ export default function UserDetails() {
         avatar: "",
         theme: 1,
         password: "",
-        pinned_badges: [] as number[]
+        pinned_badges: [] as number[],
+        region: 0,
     });
 
     const fetchUserData = useCallback(async () => {
@@ -77,6 +111,7 @@ export default function UserDetails() {
             setColorIndex(userThemeIndex !== -1 ? userThemeIndex : 0);
 
             const parsedPinned = safeParseJSON<number[]>(userData.pinned_badges, []);
+            const regionName = REGIONS[userData.region] || "";
 
             setFormData({
                 username: userData.username || "",
@@ -86,7 +121,8 @@ export default function UserDetails() {
                 avatar: userData.avatar || "",
                 theme: userData.theme || 1,
                 password: "",
-                pinned_badges: parsedPinned
+                pinned_badges: parsedPinned,
+                region: userData.region || 0,
             });
         } catch (err) {
             console.error(err);
@@ -96,9 +132,26 @@ export default function UserDetails() {
         }
     }, [userId]);
 
+    const fetchTravelLogs = useCallback(async () => {
+        if (!userId) return;
+        try {
+            setTravelLoading(true);
+            const logs = await travelService.fetchTravelLogs(1);
+            setTravelLogs(logs.filter(l => l.user_id === parseInt(userId, 10)));
+        } catch (err) {
+            console.error("Failed to fetch travel logs:", err);
+        } finally {
+            setTravelLoading(false);
+        }
+    }, [userId]);
+
     useEffect(() => {
         fetchUserData();
     }, [fetchUserData]);
+
+    useEffect(() => {
+        fetchTravelLogs();
+    }, [fetchTravelLogs]);
 
     const togglePinnedBadge = (badgeId: number) => {
         setFormData(prev => {
@@ -155,6 +208,10 @@ export default function UserDetails() {
                 updates.push(userService.updateUserPinnedBadges(targetId, formData.pinned_badges));
             }
 
+            if (formData.region !== (user.region || 0)) {
+                updates.push(userService.updateUserRegion(targetId, formData.region));
+            }
+
             if (updates.length === 0) {
                 setIsSettingsOpen(false);
                 return;
@@ -185,6 +242,36 @@ export default function UserDetails() {
         }
     };
 
+    const handleCreateTravelLog = async () => {
+        if (!newTravel.title.trim() || !newTravel.message.trim()) return;
+
+        try {
+            setCreatingTravel(true);
+            await travelService.createTravelLog(newTravel.title.trim(), newTravel.message.trim(), newTravel.type);
+            setTravelDialogOpen(false);
+            setNewTravel({ title: "", message: "", type: "check_in" });
+            fetchTravelLogs();
+        } catch (err) {
+            alert("Failed to create travel log: " + getErrorMessage(err));
+        } finally {
+            setCreatingTravel(false);
+        }
+    };
+
+    const handleDeleteTravelLog = async (logId: number) => {
+        if (!confirm("Delete this travel log entry?")) return;
+
+        try {
+            setDeletingTravelId(logId);
+            await travelService.deleteTravelLog(logId);
+            fetchTravelLogs();
+        } catch (err) {
+            alert("Failed to delete: " + getErrorMessage(err));
+        } finally {
+            setDeletingTravelId(null);
+        }
+    };
+
     const handleDeleteAccount = async () => {
         if (!confirm("WARNING: Are you sure you want to delete this account? This action is irreversible!")) return;
 
@@ -210,6 +297,8 @@ export default function UserDetails() {
     const d = accent.dark;
 
     const currentPinnedIds = safeParseJSON<number[]>(user?.pinned_badges, []);
+    const userRegion = user ? getRegionById(user.region) : null;
+    const userRegionColor = userRegion ? (REGION_COLORS[userRegion.name] || "#888") : "#888";
 
     if (loading) return <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">Loading...</div>;
     if (error) return <div className="min-h-screen bg-[#050505] text-red-500 flex items-center justify-center">Error: {error}</div>;
@@ -296,6 +385,28 @@ export default function UserDetails() {
                                                 </div>
 
                                                 <div className="grid gap-2 mt-2">
+                                                    <Label>Region</Label>
+                                                    <Select
+                                                        value={String(formData.region)}
+                                                        onValueChange={(val) => setFormData({ ...formData, region: Number(val) })}
+                                                    >
+                                                        <SelectTrigger className="bg-[#222] border-[#444]">
+                                                            <SelectValue placeholder="Select region..." />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {REGIONS.map((r) => (
+                                                                <SelectItem key={r.id} value={String(r.id)}>
+                                                                    <span className="flex items-center gap-2">
+                                                                        <span className="w-3 h-3 rounded-full inline-block shrink-0" style={{ background: REGION_COLORS[r.name] }} />
+                                                                        {r.name}
+                                                                    </span>
+                                                                </SelectItem>
+                                                            ))}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </div>
+
+                                                <div className="grid gap-2 mt-2">
                                                     <Label htmlFor="password">New Password</Label>
                                                     <Input id="password" type="password" className="bg-[#222] border-[#444]" placeholder="Leave blank if not changing..." value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
                                                 </div>
@@ -337,8 +448,12 @@ export default function UserDetails() {
                         </div>
 
                         <div className="hidden lg:flex flex-col items-center justify-center ml-auto z-10 gap-3 min-w-50">
-                            <div className="text-lg font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 8px ${g}` }}>Lvl. {user.level}</div>
                             <div className="text-lg font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 8px ${g}` }}>REP: {user.reputation}</div>
+                            {userRegion && (
+                                <div className="text-sm font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: userRegionColor, border: `1px solid ${userRegionColor}33`, background: `${userRegionColor}12`, textShadow: `0 0 8px ${userRegionColor}66` }}>
+                                    {userRegion.name}
+                                </div>
+                            )}
 
                             <div className="flex items-center justify-center gap-2 mt-2">
                                 {badgeDetails
@@ -354,21 +469,87 @@ export default function UserDetails() {
                         {/* Travel Log */}
                         <div className="flex-1">
                             <div className="h-full min-h-100 p-6 sm:p-8 rounded-3xl" style={{ background: "linear-gradient(160deg, #111 0%, #0d0d0d 100%)", border: `1px solid ${a}22` }}>
-                                <div className="flex items-center gap-3 mb-6 pb-4" style={{ borderBottom: `1px solid ${a}22` }}>
-                                    <Footprints className="w-7 h-7" style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
-                                    <h2 className="font-bold text-2xl tracking-wider text-[#e8e8e8]">Travel Log</h2>
+                                <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: `1px solid ${a}22` }}>
+                                    <div className="flex items-center gap-3">
+                                        <Footprints className="w-7 h-7" style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
+                                        <h2 className="font-bold text-2xl tracking-wider text-[#e8e8e8]">Travel Log</h2>
+                                    </div>
+                                    {isOwner && (
+                                        <Dialog open={travelDialogOpen} onOpenChange={setTravelDialogOpen}>
+                                            <DialogTrigger asChild>
+                                                <Button size="sm" className="rounded-full px-4 cursor-pointer" style={{ background: a, color: "#000", border: "none" }}>
+                                                    <Plus className="w-4 h-4 mr-1" /> New Entry
+                                                </Button>
+                                            </DialogTrigger>
+                                            <DialogContent className="bg-[#111] text-white border border-[#333]">
+                                                <DialogHeader>
+                                                    <DialogTitle>New Travel Log Entry</DialogTitle>
+                                                    <DialogDescription className="text-gray-400">Log your latest travel experience.</DialogDescription>
+                                                </DialogHeader>
+                                                <div className="space-y-4 py-4">
+                                                    <div className="space-y-2">
+                                                        <Label>Title</Label>
+                                                        <Input className="bg-[#222] border-[#444]" placeholder="Checked in at..." value={newTravel.title} onChange={(e) => setNewTravel({ ...newTravel, title: e.target.value })} />
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Type</Label>
+                                                        <Select value={newTravel.type} onValueChange={(val) => setNewTravel({ ...newTravel, type: val })}>
+                                                            <SelectTrigger className="bg-[#222] border-[#444]">
+                                                                <SelectValue />
+                                                            </SelectTrigger>
+                                                            <SelectContent>
+                                                                {TRAVEL_TYPES.map(t => (
+                                                                    <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                                                                ))}
+                                                            </SelectContent>
+                                                        </Select>
+                                                    </div>
+                                                    <div className="space-y-2">
+                                                        <Label>Message</Label>
+                                                        <Textarea className="bg-[#222] border-[#444] resize-none h-28" placeholder="What happened?" value={newTravel.message} onChange={(e) => setNewTravel({ ...newTravel, message: e.target.value })} />
+                                                    </div>
+                                                </div>
+                                                <DialogFooter>
+                                                    <DialogClose asChild>
+                                                        <Button variant="outline">Cancel</Button>
+                                                    </DialogClose>
+                                                    <Button onClick={handleCreateTravelLog} disabled={creatingTravel || !newTravel.title.trim() || !newTravel.message.trim()} style={{ background: a, color: "#000", border: "none" }}>
+                                                        {creatingTravel ? "Creating..." : "Create"}
+                                                    </Button>
+                                                </DialogFooter>
+                                            </DialogContent>
+                                        </Dialog>
+                                    )}
                                 </div>
                                 <div className="space-y-4">
-                                    <div className="flex gap-4 p-5 rounded-2xl transition-colors bg-[#151515] hover:bg-[#1a1a1a]" style={{ border: `1px solid ${a}1a` }}>
-                                        <div className="p-3 rounded-xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}><MapPin className="w-5 h-5" style={{ color: a }} /></div>
-                                        <div className="flex-1">
-                                            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                                                <h3 className="font-bold text-md text-white">Checked in at Budapest</h3>
-                                                <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit">2 hours ago</span>
+                                    {travelLoading ? (
+                                        <p className="text-sm text-gray-500 text-center py-4">Loading travel logs...</p>
+                                    ) : travelLogs.length > 0 ? travelLogs.map(log => (
+                                        <div key={log.id} className="flex gap-4 p-5 rounded-2xl transition-colors bg-[#151515] hover:bg-[#1a1a1a]" style={{ border: `1px solid ${a}1a` }}>
+                                            <div className="p-3 rounded-xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}><MapPin className="w-5 h-5" style={{ color: a }} /></div>
+                                            <div className="flex-1">
+                                                <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+                                                    <h3 className="font-bold text-md text-white">{log.title}</h3>
+                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                        <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit capitalize">{log.type?.replace('_', ' ')}</span>
+                                                        <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit">{formatTimestamp(log.timestamp)}</span>
+                                                        {isOwner && (
+                                                            <button
+                                                                onClick={() => handleDeleteTravelLog(log.id)}
+                                                                disabled={deletingTravelId === log.id}
+                                                                className="p-1 rounded-md text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-colors disabled:opacity-50 cursor-pointer"
+                                                            >
+                                                                <Trash2 className="w-3.5 h-3.5" />
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                                <p className="mt-2 text-sm text-gray-400">{log.message}</p>
                                             </div>
-                                            <p className="mt-2 text-sm text-gray-400">Visiting the Parliament building. The architecture is absolutely stunning! 🏛️</p>
                                         </div>
-                                    </div>
+                                    )) : (
+                                        <p className="text-sm text-gray-500 italic text-center py-4">No travel logs yet.</p>
+                                    )}
                                 </div>
                             </div>
                         </div>

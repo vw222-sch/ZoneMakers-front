@@ -1,12 +1,14 @@
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { MapPinned } from "lucide-react"
 import { Link, useNavigate } from "react-router"
 import { useState } from "react"
 import * as authService from "@/services/authService"
 import { useAuth } from "@/hooks/AuthContext"
 import { getErrorMessage } from "@/lib/api"
+import { REGIONS, REGION_COLORS } from "@/types"
 
 export default function Signup() {
   const { login } = useAuth();
@@ -14,6 +16,7 @@ export default function Signup() {
   const [username, setUsername] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [region, setRegion] = useState<number | "">("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -25,7 +28,7 @@ export default function Signup() {
     setLoading(true)
 
     try {
-      const { token, id } = await authService.signup(username, email, password)
+      const { token, id } = await authService.signup(username, email, password, region as number)
       const userData = await authService.fetchUserData(id)
 
       login(token, id, userData)
@@ -89,6 +92,33 @@ export default function Signup() {
                 className="max-md:text-sm"
                 required
               />
+            </Field>
+            <Field>
+              <FieldLabel className="text-base font-bold tracking-wide">
+                Region
+              </FieldLabel>
+              <Select
+                value={region === "" ? "" : String(region)}
+                onValueChange={(val) => setRegion(Number(val))}
+                required
+              >
+                <SelectTrigger className="max-md:text-sm">
+                  <SelectValue placeholder="Select your region..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {REGIONS.map((r) => (
+                    <SelectItem key={r.id} value={String(r.id)}>
+                      <span className="flex items-center gap-2">
+                        <span
+                          className="w-3 h-3 rounded-full inline-block shrink-0"
+                          style={{ background: REGION_COLORS[r.name] }}
+                        />
+                        {r.name}
+                      </span>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </Field>
 
             {error && (

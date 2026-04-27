@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail, SidebarGroup, SidebarGroupLabel, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "@/components/ui/sidebar"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger, DropdownMenuLabel } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { MapPinned, LogOut, LifeBuoy, Map, Users, MessageSquare, Search, Home } from "lucide-react"
+import { MapPinned, LogOut, LifeBuoy, Map, Users, MessageSquare, Search, Home, Award } from "lucide-react"
 import { useAuth } from "@/hooks/AuthContext"
 
 const navItems = [
@@ -37,6 +37,11 @@ const navItems = [
         title: "User Search",
         url: "/admin/user-search",
         icon: Search,
+    },
+    {
+        title: "Badge Manager",
+        url: "/admin/badges",
+        icon: Award,
     },
 ]
 

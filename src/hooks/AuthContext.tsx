@@ -1,7 +1,3 @@
-/**
- * useAuth hook - GLOBÁLIS Auth állapotkezelés React Context segítségével
- */
-
 import { createContext, useContext, useState, useCallback } from 'react';
 import type { ReactNode } from 'react';
 import type { User } from '@/types';
@@ -23,6 +19,7 @@ const AuthContext = createContext<{
     canEditUser: (userId: number | string) => boolean;
 } | undefined>(undefined);
 
+// Provides global auth state and methods via React Context
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [state, setState] = useState<AuthState>(() => ({
         token: AuthLib.getToken(),
@@ -32,6 +29,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         isLoggedIn: AuthLib.isLoggedIn(),
     }));
 
+    // Stores auth data and updates context state
     const login = useCallback((token: string, userId: number, userData: User) => {
         AuthLib.setAuth(token, userId, userData);
         setState({
@@ -43,6 +41,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
     }, []);
 
+    // Clears auth data and resets context state
     const logout = useCallback(() => {
         AuthLib.logout();
         setState({
@@ -54,6 +53,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         });
     }, []);
 
+    // Merges partial updates into user data in context
     const updateUser = useCallback((updates: Partial<User>) => {
         AuthLib.updateUserData(updates);
         const updated = AuthLib.getUser();
@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         }
     }, []);
 
+    // Checks if current user can edit target user
     const canEditUser = useCallback((userId: number | string): boolean => {
         return AuthLib.canEditUser(userId);
     }, []);
@@ -73,10 +74,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     );
 };
 
+// Hook to access auth state and methods
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {
-        throw new Error('useAuth-ot csak AuthProvider-en belül lehet használni!');
+        throw new Error('useAuth must be used within AuthProvider');
     }
     return context;
 };

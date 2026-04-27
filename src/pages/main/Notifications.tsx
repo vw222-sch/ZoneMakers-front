@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { MapPin, Bell, Info, CheckCircle, Trash2, Check, Loader2, CheckCheck } from "lucide-react";
+import { MapPin, Bell, Info, CheckCircle, Trash2, Check, Loader2 } from "lucide-react";
 
 import type { ApiNotification } from "@/types";
 import * as notificationService from "@/services/notificationService";
@@ -45,17 +45,6 @@ export default function Notifications() {
         }
     };
 
-    const handleMarkAllAsRead = async () => {
-        setActionError(null);
-        try {
-            await notificationService.markAllNotificationsAsRead();
-            setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-        } catch (error) {
-            console.error("Error marking all notifications as read:", getErrorMessage(error));
-            setActionError(getErrorMessage(error));
-        }
-    };
-
     const handleDelete = async (id: number) => {
         if (!window.confirm("Are you sure you want to delete this notification?")) return;
         setActionError(null);
@@ -97,23 +86,10 @@ export default function Notifications() {
         return `${Math.floor(diffHours / 24)} days ago`;
     };
 
-    const unreadCount = notifications.filter(n => !n.read).length;
-
     return (
         <div className="container mx-auto max-w-6xl px-4 min-h-screen space-y-6">
             <div className="flex items-center justify-between mb-16">
                 <h1 className="fl-text-4xl/6xl font-bold tracking-wide text-center flex-1">Notifications</h1>
-
-                {unreadCount > 0 && (
-                    <button
-                        onClick={handleMarkAllAsRead}
-                        className="p-3 text-green-600 hover:bg-green-100 rounded-xl transition flex items-center gap-2 font-bold tracking-wide"
-                        title="Mark all as read"
-                    >
-                        <CheckCheck className="w-5 h-5" />
-                        <span className="hidden sm:inline">Mark all as read</span>
-                    </button>
-                )}
             </div>
 
             {actionError && (

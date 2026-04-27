@@ -20,6 +20,7 @@ import AdminZoneReports from './pages/admin/AdminZoneReports';
 import AdminUserReports from './pages/admin/AdminUserReports';
 import AdminPostReports from './pages/admin/AdminPostReports';
 import AdminUserSearch from './pages/admin/AdminUserSearch';
+import AdminBadgeManager from './pages/admin/AdminBadgeManager';
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
         <Route path="user-reports" element={<AdminUserReports />} />
         <Route path="post-reports" element={<AdminPostReports />} />
         <Route path="user-search" element={<AdminUserSearch />} />
+        <Route path="badges" element={<AdminBadgeManager />} />
       </Route>
     </Routes>
   );
