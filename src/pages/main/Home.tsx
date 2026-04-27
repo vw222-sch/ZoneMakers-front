@@ -180,27 +180,27 @@ export default function Home() {
           <Accordion type='single' collapsible className='w-full space-y-2' defaultValue='item-1'>
             <AccordionItem value={`item-1`} className='rounded-xl border-2! border-primary'>
               <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>Is this service completely free?</AccordionTrigger>
-              <AccordionContent className='fl-text-base/lg px-4 text-balance'>Yes! The core map features, searching for cities, and viewing safety scores are 100% free. We believe safety is a fundamental right for every traveler. We may introduce premium features later for advanced route planning, but the map will always remain open.</AccordionContent>
+              <AccordionContent className='fl-text-base/lg px-4 text-balance'>Yes, the service is currently free, but there is a GoFundMe page where you can support the DEV team in maintaining the project.</AccordionContent>
             </AccordionItem>
 
             <AccordionItem value={`item-2`} className='rounded-xl border-2! border-primary'>
               <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>Where does the safety data come from?</AccordionTrigger>
-              <AccordionContent className='fl-text-base/lg px-4 text-balance'>We use a hybrid system. First, we aggregate official police crime statistics and government travel advisories. Second, and most importantly, we rely on real-time reports from our community of users who flag incidents, scams, and dangerous streets on the spot.</AccordionContent>
+              <AccordionContent className='fl-text-base/lg px-4 text-balance'>We rely on general news outlets and user reports.</AccordionContent>
             </AccordionItem>
 
             <AccordionItem value={`item-3`} className='rounded-xl border-2! border-primary'>
               <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>Does it work offline?</AccordionTrigger>
-              <AccordionContent className='fl-text-base/lg px-4 text-balance'>Since this is a web application, you need an internet connection to load new cities. However, the app automatically caches (saves) the map of your current location. If you lose signal while walking, you can still view the danger zones in that area.</AccordionContent>
+              <AccordionContent className='fl-text-base/lg px-4 text-balance'>No, it's live updating page, it need an internet connection to function properly.</AccordionContent>
             </AccordionItem>
 
             <AccordionItem value={`item-4`} className='rounded-xl border-2! border-primary'>
-              <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>How do I report a "Black Zone"?</AccordionTrigger>
-              <AccordionContent className='fl-text-base/lg px-4 text-balance'>It's simple. Once you launch the map, click the "Report" button in the bottom corner. You can select the type of incident (pickpocketing, harassment, poor lighting, scam) and drop a pin on the map. Other users will verify your report.</AccordionContent>
+              <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>How do I make a Zone?</AccordionTrigger>
+              <AccordionContent className='fl-text-base/lg px-4 text-balance'>First of all you need to have an account, then you open the Map Page and click on the drawing option, next you can make a custom polygon which will be seen by an admin.</AccordionContent>
             </AccordionItem>
 
             <AccordionItem value={`item-5`} className='rounded-xl border-2! border-primary'>
               <AccordionTrigger className='fl-text-base/lg font-bold tracking-widest px-4 no-underline! cursor-pointer'>Is my location data private?</AccordionTrigger>
-              <AccordionContent className='fl-text-base/lg px-4 text-balance'>Absolutely. We do not track your history or store your movements. Your location is only used locally on your device to show you relevant alerts nearby.</AccordionContent>
+              <AccordionContent className='fl-text-base/lg px-4 text-balance'>We do not track your history or store your whereabouts. However, we reserve the right to do so in the future.</AccordionContent>
             </AccordionItem>
           </Accordion>
         </div>
