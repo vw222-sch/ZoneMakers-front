@@ -52,3 +52,18 @@ export const removeBadge = async (userId: number, badgeId: number): Promise<void
 export const updateUserRep = async (payload: UpdateRepPayload): Promise<void> => {
     await api.apiPost('/admin/user/rep', payload);
 };
+
+// Send notification as admin
+export const sendAdminNotification = async (
+    userId: number,
+    title: string,
+    message: string,
+    type: string
+): Promise<void> => {
+    await api.apiPost('/notifications', { user_id: userId, title, message, type });
+};
+
+// Update user reputation (admin only)
+export const updateUserReputation = async (userId: number, rep: number): Promise<void> => {
+    await api.apiPost('/admin/user/rep', { user_id: userId, rep });
+};

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useParams } from "react-router";
-import { BadgeCheck, MessageCircle, MapPin, Quote, Footprints, Settings, Trash2, Save, Plus } from "lucide-react";
+import { BadgeCheck, MessageCircle, MapPin, Quote, Footprints, Settings, Trash2, Save, Plus, Flag, Loader2 } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import { REGIONS, REGION_COLORS, getRegionById } from "@/types";
 import * as userService from "@/services/userService";
 import * as travelService from "@/services/travelService";
 import * as notificationService from "@/services/notificationService";
+import * as reportService from "@/services/reportService";
 import { useAuth } from "@/hooks/AuthContext";
 import { getErrorMessage } from "@/lib/api";
 
@@ -85,6 +86,11 @@ export default function UserDetails() {
     const [creatingTravel, setCreatingTravel] = useState(false);
     const [deletingTravelId, setDeletingTravelId] = useState<number | null>(null);
     const [newTravel, setNewTravel] = useState({ title: "", message: "", type: "check_in" });
+
+    // Report user állapot
+    const [reportDialogOpen, setReportDialogOpen] = useState(false);
+    const [reportReason, setReportReason] = useState("");
+    const [submittingReport, setSubmittingReport] = useState(false);
 
     const [formData, setFormData] = useState({
         username: "",
@@ -290,6 +296,25 @@ export default function UserDetails() {
         }
     };
 
+    const handleReportUser = async () => {
+        if (!reportReason.trim() || !userId) return;
+
+        try {
+            setSubmittingReport(true);
+            await reportService.reportUser({
+                reason: reportReason.trim(),
+                report_id: userId,
+            });
+            setReportDialogOpen(false);
+            setReportReason("");
+            alert("Report submitted successfully. Our team will review it.");
+        } catch (err) {
+            alert("Failed to submit report: " + getErrorMessage(err));
+        } finally {
+            setSubmittingReport(false);
+        }
+    };
+
     const accent = THEME_COLORS[colorIndex] || THEME_COLORS[0];
     const a = accent.hex;
     const g = accent.glow;
@@ -440,9 +465,77 @@ export default function UserDetails() {
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
-                                    <Button variant="secondary" className="px-6 py-5 font-bold text-sm rounded-full transition-all">
-                                        Message <MessageCircle className="w-4 h-4 ml-2" />
-                                    </Button>
+                                    <div className="flex flex-wrap justify-center md:justify-start gap-3">
+                                        <Button variant="secondary" className="px-6 py-5 font-bold text-sm rounded-full transition-all">
+                                            Message <MessageCircle className="w-4 h-4 ml-2" />
+                                        </Button>
+
+                                        {/* Report User Button - only for non-owners and non-admins */}
+                                        {!isOwner && !isAdmin && (
+                                            <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
+                                                <DialogTrigger asChild>
+                                                    <Button variant="outline" className="px-6 py-5 font-bold text-sm rounded-full transition-all text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/30">
+                                                        <Flag className="w-4 h-4 mr-2" />
+                                                        Report User
+                                                    </Button>
+                                                </DialogTrigger>
+                                                <DialogContent className="sm:max-w-md">
+                                                    <DialogHeader>
+                                                        <DialogTitle className="flex items-center gap-2">
+                                                            <Flag className="w-5 h-5 text-destructive" />
+                                                            Report {user.username}
+                                                        </DialogTitle>
+                                                        <DialogDescription>
+                                                            Please provide a reason for reporting this user. False reports may result in action against your account.
+                                                        </DialogDescription>
+                                                    </DialogHeader>
+                                                    <div className="space-y-4 py-4">
+                                                        <div className="space-y-2">
+                                                            <Label htmlFor="report-reason">Reason</Label>
+                                                            <Textarea
+                                                                id="report-reason"
+                                                                value={reportReason}
+                                                                onChange={(e) => setReportReason(e.target.value)}
+                                                                placeholder="Describe why you're reporting this user..."
+                                                                rows={4}
+                                                                className="resize-none"
+                                                            />
+                                                        </div>
+                                                        <div className="rounded-lg bg-muted/50 border p-3 text-xs text-muted-foreground space-y-1">
+                                                            <p className="font-medium">Before reporting:</p>
+                                                            <ul className="list-disc list-inside space-y-0.5 ml-1">
+                                                                <li>Make sure the user has actually violated our rules</li>
+                                                                <li>Include specific details about the violation</li>
+                                                                <li>False reports may result in penalties</li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                    <DialogFooter>
+                                                        <DialogClose asChild>
+                                                            <Button variant="outline">Cancel</Button>
+                                                        </DialogClose>
+                                                        <Button
+                                                            onClick={handleReportUser}
+                                                            disabled={submittingReport || !reportReason.trim()}
+                                                            variant="destructive"
+                                                        >
+                                                            {submittingReport ? (
+                                                                <>
+                                                                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                                                    Submitting...
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <Flag className="w-4 h-4 mr-2" />
+                                                                    Submit Report
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    </DialogFooter>
+                                                </DialogContent>
+                                            </Dialog>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -526,7 +619,7 @@ export default function UserDetails() {
                                             <div className="flex-1">
                                                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
                                                     <h3 className="font-bold text-md text-foreground">{log.title}</h3>
-                                                    <div className="flex items-center gap-2 flex-shrink-0">
+                                                    <div className="flex items-center gap-2 shrink-0">
                                                         <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground w-fit capitalize">{log.type?.replace('_', ' ')}</span>
                                                         <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground w-fit">{formatTimestamp(log.timestamp)}</span>
                                                         {isOwner && (

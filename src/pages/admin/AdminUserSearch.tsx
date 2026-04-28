@@ -116,13 +116,6 @@ export default function AdminUserSearch() {
         }
     };
 
-    const openNotifDialog = () => {
-        setNotifTitle("");
-        setNotifMessage("");
-        setNotifType("info");
-        setNotifDialogOpen(true);
-    };
-
     const handleGrantBadge = async (badgeId: number) => {
         if (!userData) return;
         try {

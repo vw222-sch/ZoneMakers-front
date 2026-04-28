@@ -133,7 +133,7 @@ export interface TravelLog {
 export interface Region {
     id: number;
     name: string;
-    image: string; // Hozzáadtam az image URL-t is a kényelem kedvéért
+    image: string;
 }
 
 export const REGIONS: Region[] = [
