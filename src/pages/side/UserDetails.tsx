@@ -562,18 +562,6 @@ export default function UserDetails() {
                                 <div className="mt-8 pt-4 border-t border-border">
                                     <h3 className="text-center text-sm text-muted-foreground font-bold mb-4 uppercase tracking-widest">Badges</h3>
                                     <div className="flex flex-wrap justify-center gap-3">
-                                        
-                                        {/* ITT JELENIK MEG A REGION BADGE A TÖBBI BADGE KÖZÖTT! */}
-                                        {userRegion && userRegion.image && (
-                                            <img 
-                                                src={userRegion.image} 
-                                                alt={userRegion.name} 
-                                                title={userRegion.name} 
-                                                className="rounded-xl border border-border w-14 h-14 object-cover" 
-                                                style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} 
-                                            />
-                                        )}
-
                                         {badgeDetails.length > 0 ? badgeDetails.map((badge) => (
                                             <img key={badge.id} alt={badge.title} src={badge.image} title={badge.title} className="rounded-xl border border-border w-14 h-14 object-cover" style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} />
                                         )) : (
