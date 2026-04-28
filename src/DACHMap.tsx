@@ -176,7 +176,7 @@ export default function DACHMap() {
           closeOnClick={false}
           offset={[0, -10] as [number, number]}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <div className="flex items-center gap-2">
             <span
               style={{
                 width: 12,
@@ -186,7 +186,7 @@ export default function DACHMap() {
                 flexShrink: 0,
               }}
             />
-            <strong style={{ fontSize: 13 }}>{popupInfo.name}</strong>
+            <strong className="text-black text-sm">{popupInfo.name}</strong>
           </div>
         </Popup>
       )}

@@ -94,14 +94,14 @@ export default function AdminUserReports() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl">
                 Error loading reports: {error}
             </div>
         );
@@ -110,7 +110,7 @@ export default function AdminUserReports() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">User Reports</h2>
+                <h2 className="text-2xl font-extrabold tracking-tight">User Reports</h2>
                 <p className="text-muted-foreground">Management of toxic or rule-breaking users reported by other users.</p>
             </div>
 
@@ -137,36 +137,36 @@ export default function AdminUserReports() {
                         
                         {loadingUser ? (
                             <div className="flex justify-center py-4">
-                                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                             </div>
                         ) : userData ? (
                             <div className="flex items-start gap-4">
                                 <Avatar className="h-16 w-16">
                                     <AvatarImage src={userData.avatar || undefined} />
-                                    <AvatarFallback><UserCircle className="w-10 h-10 text-gray-400" /></AvatarFallback>
+                                    <AvatarFallback className="bg-secondary"><UserCircle className="w-10 h-10 text-muted-foreground" /></AvatarFallback>
                                 </Avatar>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <span className="font-semibold text-lg">{userData.username}</span>
-                                        {userData.verified === 1 && <Badge variant="secondary" className="bg-blue-100 text-blue-700">Verified</Badge>}
+                                        {userData.verified === 1 && <Badge variant="secondary" className="bg-blue-500/20 text-blue-500 border-none">Verified</Badge>}
                                     </div>
-                                    <p className="text-gray-500">@{userData.handle}</p>
-                                    <p className="text-sm"><strong>Email:</strong> {userData.email}</p>
-                                    <p className="text-sm"><strong>ID:</strong> {userData.id} | <strong>Level:</strong> {userData.level} | <strong>Reputation:</strong> {userData.reputation}</p>
-                                    <p className="text-sm"><strong>Bio:</strong> {userData.bio || "No bio available"}</p>
+                                    <p className="text-muted-foreground">@{userData.handle}</p>
+                                    <p className="text-sm text-muted-foreground"><strong className="text-foreground">Email:</strong> {userData.email}</p>
+                                    <p className="text-sm text-muted-foreground"><strong className="text-foreground">ID:</strong> {userData.id} | <strong className="text-foreground">Level:</strong> {userData.level} | <strong className="text-foreground">Reputation:</strong> {userData.reputation}</p>
+                                    <p className="text-sm text-muted-foreground"><strong className="text-foreground">Bio:</strong> {userData.bio || "No bio available"}</p>
                                 </div>
                             </div>
                         ) : (
-                            <p className="text-gray-500">Failed to load user data.</p>
+                            <p className="text-muted-foreground">Failed to load user data.</p>
                         )}
                     </CardContent>
                 </Card>
             )}
 
-            <div className="border rounded-md bg-white shadow-sm">
+            <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent">
                             <TableHead className="w-20">Ticket ID</TableHead>
                             <TableHead>Reported ID</TableHead>
                             <TableHead>Reporter ID</TableHead>
@@ -177,16 +177,16 @@ export default function AdminUserReports() {
                     <TableBody>
                         {reports.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center h-24 text-gray-500">
+                                <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                                     No user reports found.
                                 </TableCell>
                             </TableRow>
                         ) : reports.map((report) => (
-                            <TableRow key={report.id} className={selectedUserId === parseInt(report.report_id, 10) ? "bg-blue-50" : ""}>
+                            <TableRow key={report.id} className={`${selectedUserId === parseInt(report.report_id, 10) ? "bg-muted/50" : ""}`}>
                                 <TableCell className="font-medium">#{report.id}</TableCell>
-                                <TableCell className="font-semibold text-red-600">{report.report_id}</TableCell>
-                                <TableCell>{report.user_id}</TableCell>
-                                <TableCell className="max-w-md truncate">{report.reason}</TableCell>
+                                <TableCell className="font-semibold text-destructive">{report.report_id}</TableCell>
+                                <TableCell className="text-muted-foreground">{report.user_id}</TableCell>
+                                <TableCell className="max-w-md truncate text-muted-foreground">{report.reason}</TableCell>
                                 <TableCell className="text-right space-x-2">
                                     <Button 
                                         variant="outline" 
@@ -217,7 +217,7 @@ export default function AdminUserReports() {
                     <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>
                         <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                     </Button>
-                    <div className="text-sm text-gray-600 font-medium px-2">{page}. page</div>
+                    <div className="text-sm text-muted-foreground font-medium px-2">{page}. page</div>
                     <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
                         Next <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>

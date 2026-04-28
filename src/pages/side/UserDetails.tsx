@@ -111,7 +111,6 @@ export default function UserDetails() {
             setColorIndex(userThemeIndex !== -1 ? userThemeIndex : 0);
 
             const parsedPinned = safeParseJSON<number[]>(userData.pinned_badges, []);
-            const regionName = REGIONS[userData.region] || "";
 
             setFormData({
                 username: userData.username || "",
@@ -298,79 +297,80 @@ export default function UserDetails() {
 
     const currentPinnedIds = safeParseJSON<number[]>(user?.pinned_badges, []);
     const userRegion = user ? getRegionById(user.region) : null;
-    const userRegionColor = userRegion ? (REGION_COLORS[userRegion.name] || "#888") : "#888";
 
-    if (loading) return <div className="min-h-screen bg-[#050505] text-white flex items-center justify-center">Loading...</div>;
-    if (error) return <div className="min-h-screen bg-[#050505] text-red-500 flex items-center justify-center">Error: {error}</div>;
+    if (loading) return <div className="min-h-screen bg-background text-foreground flex items-center justify-center">Loading...</div>;
+    if (error) return <div className="min-h-screen bg-background text-destructive flex items-center justify-center">Error: {error}</div>;
     if (!user) return null;
 
     return (
-        <div className="min-h-screen pb-10" style={{ background: `radial-gradient(ellipse at 60% 0%, ${d} 0%, #101010 55%, #000 100%)` }}>
+        <div className="min-h-screen pb-10 bg-background text-foreground" style={{ background: `radial-gradient(ellipse at 60% 0%, ${d} 0%, var(--background) 55%, var(--background) 100%)` }}>
             <div className="container mx-auto px-4 sm:px-8 h-fit max-w-7xl pt-8">
                 <div className="flex flex-col w-full gap-4 rounded-4xl pb-4">
-                    <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8 rounded-t-4xl rounded-b-xl relative overflow-hidden"
-                        style={{ background: `linear-gradient(135deg, #111 0%, ${d} 60%, #0d0d0d 100%)`, borderBottom: `1px solid ${a}33` }}>
+                    
+                    {/* HEADER SECTION */}
+                    <div className="flex flex-col md:flex-row items-center md:items-start gap-8 p-8 rounded-t-4xl rounded-b-xl relative overflow-hidden bg-card"
+                        style={{ borderBottom: `1px solid ${a}33` }}>
 
                         <div className="absolute inset-0 pointer-events-none"
                             style={{ backgroundImage: `linear-gradient(${a}08 1px, transparent 1px), linear-gradient(90deg, ${a}08 1px, transparent 1px)`, backgroundSize: "40px 40px" }} />
 
                         <Avatar className="sm:w-48 sm:h-48 w-32 h-32 z-10 shrink-0" style={{ border: `3px solid ${a}66`, boxShadow: `0 0 32px ${g}` }}>
                             <AvatarImage src={user.avatar || undefined} className="object-cover" />
-                            <AvatarFallback className="bg-[#111] text-4xl" style={{ color: a }}>
+                            <AvatarFallback className="bg-secondary text-4xl" style={{ color: a }}>
                                 {user.username.substring(0, 2).toUpperCase()}
                             </AvatarFallback>
                         </Avatar>
 
-                        <div className="flex flex-col gap-2 z-10 text-white w-full text-center md:text-left mt-4 md:mt-0">
+                        <div className="flex flex-col gap-2 z-10 w-full text-center md:text-left mt-4 md:mt-0">
                             <div className="flex items-center justify-center md:justify-start gap-2">
-                                <h1 className="font-extrabold text-4xl tracking-wide drop-shadow-md text-[#e8e8e8]">{user.username}</h1>
+                                <h1 className="font-extrabold text-4xl tracking-wide drop-shadow-md text-foreground">{user.username}</h1>
                                 {user.verified === 1 && (
                                     <BadgeCheck size={28} style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
                                 )}
                                 {user.admin === 1 && (
-                                    <span className="text-xs px-2 py-1 rounded-md bg-red-600 font-bold ml-2">ADMIN</span>
+                                    <span className="text-xs px-2 py-1 rounded-md bg-destructive text-destructive-foreground font-bold ml-2">ADMIN</span>
                                 )}
                             </div>
-                            <p className="font-semibold tracking-wider text-[#777]">@{user.handle}</p>
+                            <p className="font-semibold tracking-wider text-muted-foreground">@{user.handle}</p>
 
                             <div className="flex flex-wrap justify-center md:justify-start gap-3 mt-6">
                                 {canEdit ? (
                                     <Dialog open={isSettingsOpen} onOpenChange={setIsSettingsOpen}>
                                         <DialogTrigger asChild>
-                                            <Button className="px-6 py-5 font-bold text-sm rounded-full cursor-pointer shadow-lg transition-all border-none"
+                                            <Button className="px-6 py-5 font-bold text-sm rounded-full shadow-lg transition-all"
                                                 style={{ background: a, color: "#000", boxShadow: `0 0 15px ${g}` }}>
                                                 Edit Profile <Settings className="w-4 h-4 ml-2" />
                                             </Button>
                                         </DialogTrigger>
 
-                                        <DialogContent className="sm:max-w-125 bg-[#111] text-white border border-[#333] shadow-2xl">
+                                        <DialogContent className="sm:max-w-125">
                                             <DialogHeader>
                                                 <DialogTitle className="text-2xl" style={{ color: a }}>
-                                                    Profile Settings {isAdmin && !isOwner && <span className="text-sm font-normal text-gray-400">(Admin Edit)</span>}
+                                                    Profile Settings {isAdmin && !isOwner && <span className="text-sm font-normal text-muted-foreground">(Admin Edit)</span>}
                                                 </DialogTitle>
-                                                <DialogDescription className="text-gray-400">Modify your information. Click the save button to finalize changes.</DialogDescription>
+                                                <DialogDescription>Modify your information. Click the save button to finalize changes.</DialogDescription>
                                             </DialogHeader>
 
                                             <div className="grid gap-4 py-4 max-h-[60vh] overflow-y-auto pr-2">
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="username">Username</Label>
-                                                    <Input id="username" className="bg-[#222] border-[#444]" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
+                                                    <Input id="username" value={formData.username} onChange={(e) => setFormData({ ...formData, username: e.target.value })} />
                                                 </div>
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="handle">Handle</Label>
-                                                    <Input id="handle" className="bg-[#222] border-[#444]" value={formData.handle} onChange={(e) => setFormData({ ...formData, handle: e.target.value })} />
+                                                    <Input id="handle" value={formData.handle} onChange={(e) => setFormData({ ...formData, handle: e.target.value })} />
                                                 </div>
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="email">Email</Label>
-                                                    <Input id="email" type="email" className="bg-[#222] border-[#444]" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
+                                                    <Input id="email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} />
                                                 </div>
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="avatar">Avatar URL</Label>
-                                                    <Input id="avatar" className="bg-[#222] border-[#444]" placeholder="https://..." value={formData.avatar} onChange={(e) => setFormData({ ...formData, avatar: e.target.value })} />
+                                                    <Input id="avatar" placeholder="https://..." value={formData.avatar} onChange={(e) => setFormData({ ...formData, avatar: e.target.value })} />
                                                 </div>
                                                 <div className="grid gap-2">
                                                     <Label htmlFor="bio">Bio</Label>
-                                                    <Textarea id="bio" className="bg-[#222] border-[#444] resize-none h-24" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} />
+                                                    <Textarea id="bio" className="resize-none h-24" value={formData.bio} onChange={(e) => setFormData({ ...formData, bio: e.target.value })} />
                                                 </div>
 
                                                 <div className="grid gap-2 mt-2">
@@ -378,7 +378,7 @@ export default function UserDetails() {
                                                     <div className="flex gap-3 flex-wrap">
                                                         {THEME_COLORS.map((c) => (
                                                             <button key={c.id} title={c.name} type="button" onClick={() => setFormData({ ...formData, theme: c.id })}
-                                                                className="w-8 h-8 rounded-full cursor-pointer transition-all"
+                                                                className="w-8 h-8 rounded-full transition-all"
                                                                 style={{ background: c.hex, border: formData.theme === c.id ? "3px solid #fff" : "2px solid transparent", boxShadow: formData.theme === c.id ? `0 0 10px ${c.glow}` : "none" }} />
                                                         ))}
                                                     </div>
@@ -390,7 +390,7 @@ export default function UserDetails() {
                                                         value={String(formData.region)}
                                                         onValueChange={(val) => setFormData({ ...formData, region: Number(val) })}
                                                     >
-                                                        <SelectTrigger className="bg-[#222] border-[#444]">
+                                                        <SelectTrigger>
                                                             <SelectValue placeholder="Select region..." />
                                                         </SelectTrigger>
                                                         <SelectContent>
@@ -408,12 +408,12 @@ export default function UserDetails() {
 
                                                 <div className="grid gap-2 mt-2">
                                                     <Label htmlFor="password">New Password</Label>
-                                                    <Input id="password" type="password" className="bg-[#222] border-[#444]" placeholder="Leave blank if not changing..." value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
+                                                    <Input id="password" type="password" placeholder="Leave blank if not changing..." value={formData.password} onChange={(e) => setFormData({ ...formData, password: e.target.value })} />
                                                 </div>
 
                                                 <div className="grid gap-2 mt-2">
                                                     <Label>Pinned Badges (Max 3)</Label>
-                                                    <div className="flex flex-wrap gap-2 p-3 bg-[#222] rounded-lg border border-[#444] min-h-16">
+                                                    <div className="flex flex-wrap gap-2 p-3 bg-muted rounded-lg border min-h-16">
                                                         {badgeDetails.length > 0 ? badgeDetails.map((badge) => {
                                                             const isSelected = formData.pinned_badges.includes(badge.id);
                                                             return (
@@ -422,25 +422,25 @@ export default function UserDetails() {
                                                                     style={{ border: isSelected ? `2px solid ${a}` : "2px solid transparent", opacity: isSelected ? 1 : 0.4, boxShadow: isSelected ? `0 0 10px ${g}` : "none" }} />
                                                             );
                                                         }) : (
-                                                            <span className="text-xs text-gray-500">No pinned badges available.</span>
+                                                            <span className="text-xs text-muted-foreground">No pinned badges available.</span>
                                                         )}
                                                     </div>
-                                                    <span className="text-xs text-right text-gray-400 font-mono">{formData.pinned_badges.length} / 3 selected</span>
+                                                    <span className="text-xs text-right text-muted-foreground font-mono">{formData.pinned_badges.length} / 3 selected</span>
                                                 </div>
                                             </div>
 
-                                            <DialogFooter className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 mt-4 pt-4 border-t border-[#333]">
+                                            <DialogFooter className="flex flex-col sm:flex-row sm:justify-between items-center gap-4 mt-4 pt-4 border-t">
                                                 <Button variant="destructive" onClick={handleDeleteAccount} className="w-full sm:w-auto flex items-center gap-2">
                                                     <Trash2 className="w-4 h-4" /> Delete Account
                                                 </Button>
-                                                <Button onClick={handleSaveSettings} disabled={isSaving} className="w-full sm:w-auto bg-white text-black hover:bg-gray-200">
+                                                <Button onClick={handleSaveSettings} disabled={isSaving} className="w-full sm:w-auto bg-primary text-primary-foreground hover:bg-primary/90">
                                                     {isSaving ? "Saving..." : <><Save className="w-4 h-4 mr-2" /> Save</>}
                                                 </Button>
                                             </DialogFooter>
                                         </DialogContent>
                                     </Dialog>
                                 ) : (
-                                    <Button className="px-6 py-5 font-bold text-sm rounded-full cursor-pointer transition-all border-none bg-[#222] text-white hover:bg-[#333]">
+                                    <Button variant="secondary" className="px-6 py-5 font-bold text-sm rounded-full transition-all">
                                         Message <MessageCircle className="w-4 h-4 ml-2" />
                                     </Button>
                                 )}
@@ -449,12 +449,7 @@ export default function UserDetails() {
 
                         <div className="hidden lg:flex flex-col items-center justify-center ml-auto z-10 gap-3 min-w-50">
                             <div className="text-lg font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: a, border: `1px solid ${a}33`, background: `${a}12`, textShadow: `0 0 8px ${g}` }}>REP: {user.reputation}</div>
-                            {userRegion && (
-                                <div className="text-sm font-bold tracking-widest rounded-xl p-3 w-full text-center" style={{ color: userRegionColor, border: `1px solid ${userRegionColor}33`, background: `${userRegionColor}12`, textShadow: `0 0 8px ${userRegionColor}66` }}>
-                                    {userRegion.name}
-                                </div>
-                            )}
-
+                            
                             <div className="flex items-center justify-center gap-2 mt-2">
                                 {badgeDetails
                                     .filter(b => currentPinnedIds.includes(b.id))
@@ -465,36 +460,37 @@ export default function UserDetails() {
                         </div>
                     </div>
 
+                    {/* CONTENT SECTION */}
                     <div className="flex flex-col lg:flex-row gap-4 px-4 pb-4 mt-2">
                         {/* Travel Log */}
                         <div className="flex-1">
-                            <div className="h-full min-h-100 p-6 sm:p-8 rounded-3xl" style={{ background: "linear-gradient(160deg, #111 0%, #0d0d0d 100%)", border: `1px solid ${a}22` }}>
+                            <div className="h-full min-h-100 p-6 sm:p-8 rounded-3xl bg-card border" style={{ borderColor: `${a}22` }}>
                                 <div className="flex items-center justify-between mb-6 pb-4" style={{ borderBottom: `1px solid ${a}22` }}>
                                     <div className="flex items-center gap-3">
                                         <Footprints className="w-7 h-7" style={{ color: a, filter: `drop-shadow(0 0 6px ${a})` }} />
-                                        <h2 className="font-bold text-2xl tracking-wider text-[#e8e8e8]">Travel Log</h2>
+                                        <h2 className="font-bold text-2xl tracking-wider text-foreground">Travel Log</h2>
                                     </div>
                                     {isOwner && (
                                         <Dialog open={travelDialogOpen} onOpenChange={setTravelDialogOpen}>
                                             <DialogTrigger asChild>
-                                                <Button size="sm" className="rounded-full px-4 cursor-pointer" style={{ background: a, color: "#000", border: "none" }}>
+                                                <Button size="sm" className="rounded-full px-4" style={{ background: a, color: "#000" }}>
                                                     <Plus className="w-4 h-4 mr-1" /> New Entry
                                                 </Button>
                                             </DialogTrigger>
-                                            <DialogContent className="bg-[#111] text-white border border-[#333]">
+                                            <DialogContent>
                                                 <DialogHeader>
                                                     <DialogTitle>New Travel Log Entry</DialogTitle>
-                                                    <DialogDescription className="text-gray-400">Log your latest travel experience.</DialogDescription>
+                                                    <DialogDescription>Log your latest travel experience.</DialogDescription>
                                                 </DialogHeader>
                                                 <div className="space-y-4 py-4">
                                                     <div className="space-y-2">
                                                         <Label>Title</Label>
-                                                        <Input className="bg-[#222] border-[#444]" placeholder="Checked in at..." value={newTravel.title} onChange={(e) => setNewTravel({ ...newTravel, title: e.target.value })} />
+                                                        <Input placeholder="Checked in at..." value={newTravel.title} onChange={(e) => setNewTravel({ ...newTravel, title: e.target.value })} />
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Type</Label>
                                                         <Select value={newTravel.type} onValueChange={(val) => setNewTravel({ ...newTravel, type: val })}>
-                                                            <SelectTrigger className="bg-[#222] border-[#444]">
+                                                            <SelectTrigger>
                                                                 <SelectValue />
                                                             </SelectTrigger>
                                                             <SelectContent>
@@ -506,14 +502,14 @@ export default function UserDetails() {
                                                     </div>
                                                     <div className="space-y-2">
                                                         <Label>Message</Label>
-                                                        <Textarea className="bg-[#222] border-[#444] resize-none h-28" placeholder="What happened?" value={newTravel.message} onChange={(e) => setNewTravel({ ...newTravel, message: e.target.value })} />
+                                                        <Textarea className="resize-none h-28" placeholder="What happened?" value={newTravel.message} onChange={(e) => setNewTravel({ ...newTravel, message: e.target.value })} />
                                                     </div>
                                                 </div>
                                                 <DialogFooter>
                                                     <DialogClose asChild>
                                                         <Button variant="outline">Cancel</Button>
                                                     </DialogClose>
-                                                    <Button onClick={handleCreateTravelLog} disabled={creatingTravel || !newTravel.title.trim() || !newTravel.message.trim()} style={{ background: a, color: "#000", border: "none" }}>
+                                                    <Button onClick={handleCreateTravelLog} disabled={creatingTravel || !newTravel.title.trim() || !newTravel.message.trim()} style={{ background: a, color: "#000" }}>
                                                         {creatingTravel ? "Creating..." : "Create"}
                                                     </Button>
                                                 </DialogFooter>
@@ -523,32 +519,32 @@ export default function UserDetails() {
                                 </div>
                                 <div className="space-y-4">
                                     {travelLoading ? (
-                                        <p className="text-sm text-gray-500 text-center py-4">Loading travel logs...</p>
+                                        <p className="text-sm text-muted-foreground text-center py-4">Loading travel logs...</p>
                                     ) : travelLogs.length > 0 ? travelLogs.map(log => (
-                                        <div key={log.id} className="flex gap-4 p-5 rounded-2xl transition-colors bg-[#151515] hover:bg-[#1a1a1a]" style={{ border: `1px solid ${a}1a` }}>
-                                            <div className="p-3 rounded-xl h-fit" style={{ background: `${a}15`, border: `1px solid ${a}33` }}><MapPin className="w-5 h-5" style={{ color: a }} /></div>
+                                        <div key={log.id} className="flex gap-4 p-5 rounded-2xl transition-colors bg-secondary/50 hover:bg-secondary/80" style={{ border: `1px solid ${a}1a` }}>
+                                            <div className="p-3 rounded-xl h-fit bg-background" style={{ border: `1px solid ${a}33` }}><MapPin className="w-5 h-5" style={{ color: a }} /></div>
                                             <div className="flex-1">
                                                 <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-2">
-                                                    <h3 className="font-bold text-md text-white">{log.title}</h3>
+                                                    <h3 className="font-bold text-md text-foreground">{log.title}</h3>
                                                     <div className="flex items-center gap-2 flex-shrink-0">
-                                                        <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit capitalize">{log.type?.replace('_', ' ')}</span>
-                                                        <span className="text-xs px-2 py-1 rounded-md bg-[#222] text-gray-300 w-fit">{formatTimestamp(log.timestamp)}</span>
+                                                        <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground w-fit capitalize">{log.type?.replace('_', ' ')}</span>
+                                                        <span className="text-xs px-2 py-1 rounded-md bg-muted text-muted-foreground w-fit">{formatTimestamp(log.timestamp)}</span>
                                                         {isOwner && (
                                                             <button
                                                                 onClick={() => handleDeleteTravelLog(log.id)}
                                                                 disabled={deletingTravelId === log.id}
-                                                                className="p-1 rounded-md text-gray-500 hover:text-red-400 hover:bg-red-400/10 transition-colors disabled:opacity-50 cursor-pointer"
+                                                                className="p-1 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors disabled:opacity-50 cursor-pointer"
                                                             >
                                                                 <Trash2 className="w-3.5 h-3.5" />
                                                             </button>
                                                         )}
                                                     </div>
                                                 </div>
-                                                <p className="mt-2 text-sm text-gray-400">{log.message}</p>
+                                                <p className="mt-2 text-sm text-muted-foreground">{log.message}</p>
                                             </div>
                                         </div>
                                     )) : (
-                                        <p className="text-sm text-gray-500 italic text-center py-4">No travel logs yet.</p>
+                                        <p className="text-sm text-muted-foreground italic text-center py-4">No travel logs yet.</p>
                                     )}
                                 </div>
                             </div>
@@ -556,20 +552,32 @@ export default function UserDetails() {
 
                         {/* About Me & Badges */}
                         <div className="flex flex-col lg:w-96 gap-4">
-                            <div className="p-6 h-full min-h-100 rounded-3xl bg-[linear-gradient(160deg,#111_0%,#0d0d0d_100%)] border flex flex-col" style={{ borderColor: `${a}22` }}>
-                                <h2 className="text-center font-bold text-xl tracking-wider mb-4 flex items-center justify-center gap-2 text-white pb-4 border-b border-[#222]">
+                            <div className="p-6 h-full min-h-100 rounded-3xl bg-card border flex flex-col" style={{ borderColor: `${a}22` }}>
+                                <h2 className="text-center font-bold text-xl tracking-wider mb-4 flex items-center justify-center gap-2 text-foreground pb-4 border-b border-border">
                                     <Quote className="w-5 h-5 text-transparent" style={{ fill: `${a}50` }} /> About Me
                                 </h2>
-                                <p className="font-medium text-md text-center leading-relaxed text-gray-300 flex-1">
-                                    {user.bio || <span className="italic text-gray-600">No Bio yet.</span>}
+                                <p className="font-medium text-md text-center leading-relaxed text-muted-foreground flex-1">
+                                    {user.bio || <span className="italic text-muted-foreground/50">No Bio yet.</span>}
                                 </p>
-                                <div className="mt-8 pt-4 border-t border-[#222]">
-                                    <h3 className="text-center text-sm text-gray-500 font-bold mb-4 uppercase tracking-widest">Badges</h3>
+                                <div className="mt-8 pt-4 border-t border-border">
+                                    <h3 className="text-center text-sm text-muted-foreground font-bold mb-4 uppercase tracking-widest">Badges</h3>
                                     <div className="flex flex-wrap justify-center gap-3">
+                                        
+                                        {/* ITT JELENIK MEG A REGION BADGE A TÖBBI BADGE KÖZÖTT! */}
+                                        {userRegion && userRegion.image && (
+                                            <img 
+                                                src={userRegion.image} 
+                                                alt={userRegion.name} 
+                                                title={userRegion.name} 
+                                                className="rounded-xl border border-border w-14 h-14 object-cover" 
+                                                style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} 
+                                            />
+                                        )}
+
                                         {badgeDetails.length > 0 ? badgeDetails.map((badge) => (
-                                            <img key={badge.id} alt={badge.title} src={badge.image} title={badge.title} className="rounded-xl border border-[#333] w-14 h-14 object-cover" style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} />
+                                            <img key={badge.id} alt={badge.title} src={badge.image} title={badge.title} className="rounded-xl border border-border w-14 h-14 object-cover" style={{ background: `${a}18`, boxShadow: `0 0 10px ${a}15` }} />
                                         )) : (
-                                            <span className="text-xs text-gray-600">No badges available.</span>
+                                            !userRegion && <span className="text-xs text-muted-foreground/50">No badges available.</span>
                                         )}
                                     </div>
                                 </div>

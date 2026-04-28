@@ -25,18 +25,15 @@ export default function AdminUserSearch() {
     const [sendingNotif, setSendingNotif] = useState(false);
     const { state: authState } = useAuth();
 
-    // Notification
     const [notifTitle, setNotifTitle] = useState("");
     const [notifMessage, setNotifMessage] = useState("");
     const [notifType, setNotifType] = useState("info");
     const [notifDialogOpen, setNotifDialogOpen] = useState(false);
 
-    // Badge kezelés
     const [allBadges, setAllBadges] = useState<BadgeData[]>([]);
     const [badgesLoading, setBadgesLoading] = useState(false);
     const [badgeActionLoading, setBadgeActionLoading] = useState<number | null>(null);
 
-    // Rep módosítás
     const [newRep, setNewRep] = useState("");
     const [repUpdating, setRepUpdating] = useState(false);
 
@@ -58,7 +55,6 @@ export default function AdminUserSearch() {
                 setError("⚠️ This is your own profile!");
             }
 
-            // Badge-ek betöltése
             setBadgesLoading(true);
             try {
                 const badges = await fetchAllBadges();
@@ -132,7 +128,6 @@ export default function AdminUserSearch() {
         try {
             setBadgeActionLoading(badgeId);
             await grantBadge(userData.id, badgeId);
-            // Frissítjük a user adatait, hogy a badge lista is frissüljön
             const updated = await fetchUserByHandle(userData.handle);
             setUserData(updated);
         } catch (err) {
@@ -171,11 +166,10 @@ export default function AdminUserSearch() {
             setRepUpdating(true);
             await updateUserRep({ user_id: userData.id, rep: repNum });
 
-            // User adatainak frissítése, hogy a UI is mutassa az új értéket
             const updated = await fetchUserByHandle(userData.handle);
             setUserData(updated);
 
-            setNewRep(""); // Input kiürítése
+            setNewRep("");
             alert("Reputation updated successfully!");
         } catch (err) {
             alert(getErrorMessage(err));
@@ -192,8 +186,8 @@ export default function AdminUserSearch() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">User Search</h2>
-                <p className="text-muted-foreground">Search for users by ID.</p>
+                <h2 className="text-2xl font-extrabold tracking-tight">User Search</h2>
+                <p className="text-muted-foreground">Search for users by handle.</p>
             </div>
 
             <form onSubmit={handleSearch} className="flex gap-3 max-w-xl">
@@ -204,13 +198,13 @@ export default function AdminUserSearch() {
                     onChange={(e) => setsearchHandle(e.target.value)}
                     className="flex-1"
                 />
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" disabled={loading} className="font-bold tracking-wider">
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <><Search className="w-4 h-4 mr-2" /> Search</>}
                 </Button>
             </form>
 
             {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl">
                     {error}
                 </div>
             )}
@@ -221,33 +215,33 @@ export default function AdminUserSearch() {
                         <CardHeader className="flex flex-row items-center gap-4">
                             <Avatar className="h-16 w-16">
                                 <AvatarImage src={userData.avatar || undefined} />
-                                <AvatarFallback><UserCircle className="w-10 h-10 text-gray-400" /></AvatarFallback>
+                                <AvatarFallback className="bg-secondary"><UserCircle className="w-10 h-10 text-muted-foreground" /></AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
                                 <CardTitle className="flex items-center gap-2">
                                     {userData.username}
-                                    {userData.verified === 1 && <Badge variant="secondary" className="bg-blue-100 text-blue-700">Verified</Badge>}
-                                    {userData.admin === 1 && <Badge variant="secondary" className="bg-red-100 text-red-700"><Shield className="w-3 h-3 mr-1" />Admin</Badge>}
+                                    {userData.verified === 1 && <Badge variant="secondary" className="bg-blue-500/20 text-blue-500 border-none">Verified</Badge>}
+                                    {userData.admin === 1 && <Badge variant="secondary" className="bg-destructive/20 text-destructive border-none"><Shield className="w-3 h-3 mr-1" />Admin</Badge>}
                                 </CardTitle>
-                                <p className="text-sm text-gray-500">@{userData.handle}</p>
+                                <p className="text-sm text-muted-foreground">@{userData.handle}</p>
                             </div>
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <Mail className="w-4 h-4 text-gray-400" />
+                                        <Mail className="w-4 h-4 text-muted-foreground" />
                                         <span>{userData.email}</span>
                                     </div>
                                     <div>
-                                        <strong>Bio:</strong>
-                                        <p className="text-gray-600 mt-1">{userData.bio || "Nincs bio megadva."}</p>
+                                        <strong className="text-foreground">Bio:</strong>
+                                        <p className="text-muted-foreground mt-1">{userData.bio || "Nincs bio megadva."}</p>
                                     </div>
                                 </div>
-                                <div className="space-y-2 border-l pl-4">
-                                    <div><strong>ID:</strong> {userData.id}</div>
+                                <div className="space-y-2 border-l border-border pl-4">
+                                    <div className="text-muted-foreground"><strong className="text-foreground">ID:</strong> {userData.id}</div>
                                     <div>
-                                        <strong>Reputation:</strong> {userData.reputation}
+                                        <strong className="text-foreground">Reputation:</strong> <span className="text-muted-foreground">{userData.reputation}</span>
                                         <div className="flex items-center gap-2 mt-2">
                                             <Input
                                                 type="number"
@@ -273,14 +267,14 @@ export default function AdminUserSearch() {
                                             </Button>
                                         </div>
                                     </div>
-                                    <div><strong>Theme:</strong> {userData.theme}</div>
+                                    <div className="text-muted-foreground"><strong className="text-foreground">Theme:</strong> {userData.theme}</div>
                                 </div>
                             </div>
 
-                            <div className="flex gap-2 pt-4 border-t">
+                            <div className="flex gap-2 pt-4 border-t border-border">
                                 <Dialog open={notifDialogOpen} onOpenChange={setNotifDialogOpen}>
                                     <DialogTrigger asChild>
-                                        <Button variant="outline" onClick={openNotifDialog}>
+                                        <Button variant="outline">
                                             <Bell className="w-4 h-4 mr-2" />
                                             Send Notification
                                         </Button>
@@ -293,7 +287,7 @@ export default function AdminUserSearch() {
                                             <div className="space-y-2">
                                                 <Label>Type</Label>
                                                 <select
-                                                    className="w-full rounded-md border p-2 text-sm"
+                                                    className="w-full rounded-md border border-border bg-background p-2 text-sm text-foreground focus:ring-2 focus:ring-ring"
                                                     value={notifType}
                                                     onChange={(e) => setNotifType(e.target.value)}
                                                 >
@@ -328,6 +322,7 @@ export default function AdminUserSearch() {
                                             <Button
                                                 onClick={handleSendNotification}
                                                 disabled={sendingNotif || !notifTitle.trim() || !notifMessage.trim()}
+                                                className="font-bold tracking-wider"
                                             >
                                                 {sendingNotif ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Bell className="w-4 h-4 mr-2" />}
                                                 Send
@@ -348,7 +343,6 @@ export default function AdminUserSearch() {
                         </CardContent>
                     </Card>
 
-                    {/* Badge kezelés */}
                     <Card className="max-w-2xl">
                         <CardHeader>
                             <CardTitle className="flex items-center gap-2">
@@ -362,7 +356,7 @@ export default function AdminUserSearch() {
                         <CardContent>
                             {badgesLoading ? (
                                 <div className="flex justify-center py-8">
-                                    <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+                                    <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
                                 </div>
                             ) : allBadges.length > 0 ? (
                                 <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-4">
@@ -371,7 +365,7 @@ export default function AdminUserSearch() {
                                         const isLoading = badgeActionLoading === badge.id;
 
                                         return (
-                                            <div key={badge.id} className="flex flex-col items-center gap-2 p-2 rounded-lg border border-transparent hover:border-gray-200 transition-colors">
+                                            <div key={badge.id} className="flex flex-col items-center gap-2 p-2 rounded-xl border border-transparent hover:border-border transition-colors">
                                                 <img
                                                     src={badge.image}
                                                     alt={badge.title}
@@ -379,14 +373,14 @@ export default function AdminUserSearch() {
                                                     className="w-12 h-12 rounded-lg object-cover"
                                                     style={{ opacity: hasBadge ? 1 : 0.4 }}
                                                 />
-                                                <span className="text-xs text-gray-500 truncate w-full text-center">{badge.title}</span>
+                                                <span className="text-xs text-muted-foreground truncate w-full text-center">{badge.title}</span>
                                                 {isLoading ? (
-                                                    <Loader2 className="w-4 h-4 animate-spin text-gray-400" />
+                                                    <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                                                 ) : hasBadge ? (
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-7 px-2 text-xs text-red-500 hover:text-red-700 hover:bg-red-50 cursor-pointer"
+                                                        className="h-7 px-2 text-xs text-destructive hover:text-destructive hover:bg-destructive/10"
                                                         onClick={() => handleRemoveBadge(badge.id)}
                                                     >
                                                         <X className="w-3 h-3 mr-1" /> Remove
@@ -395,7 +389,7 @@ export default function AdminUserSearch() {
                                                     <Button
                                                         size="sm"
                                                         variant="ghost"
-                                                        className="h-7 px-2 text-xs text-green-600 hover:text-green-800 hover:bg-green-50 cursor-pointer"
+                                                        className="h-7 px-2 text-xs text-green-500 hover:text-green-500 hover:bg-green-500/10"
                                                         onClick={() => handleGrantBadge(badge.id)}
                                                     >
                                                         <Award className="w-3 h-3 mr-1" /> Grant
@@ -406,7 +400,7 @@ export default function AdminUserSearch() {
                                     })}
                                 </div>
                             ) : (
-                                <p className="text-sm text-gray-500 text-center py-4">No badges available in the system.</p>
+                                <p className="text-sm text-muted-foreground text-center py-4">No badges available in the system.</p>
                             )}
                         </CardContent>
                     </Card>

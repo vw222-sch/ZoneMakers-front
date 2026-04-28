@@ -18,11 +18,12 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from '@/components/ui/textarea'
 
+// Átalakítva áttetsző/szemantikus színekre, hogy dark és light módban is jól mutassanak
 const HAZARD_STYLE: Record<string, { fillColor: string; bg: string; text: string }> = {
-    Critical: { fillColor: 'rgba(220, 38, 38, 0.6)', bg: 'bg-red-100', text: 'text-red-800' },
-    High: { fillColor: 'rgba(234, 88, 12, 0.6)', bg: 'bg-orange-100', text: 'text-orange-800' },
-    Medium: { fillColor: 'rgba(250, 204, 21, 0.6)', bg: 'bg-yellow-100', text: 'text-yellow-800' },
-    Low: { fillColor: 'rgba(34, 197, 94, 0.6)', bg: 'bg-green-100', text: 'text-green-800' },
+    Critical: { fillColor: 'rgba(220, 38, 38, 0.6)', bg: 'bg-red-500/20', text: 'text-red-500' },
+    High: { fillColor: 'rgba(234, 88, 12, 0.6)', bg: 'bg-orange-500/20', text: 'text-orange-500' },
+    Medium: { fillColor: 'rgba(250, 204, 21, 0.6)', bg: 'bg-yellow-500/20', text: 'text-yellow-500' },
+    Low: { fillColor: 'rgba(34, 197, 94, 0.6)', bg: 'bg-green-500/20', text: 'text-green-500' },
 };
 
 const getHazardStyle = (level: string) => HAZARD_STYLE[level] ?? HAZARD_STYLE.Low;
@@ -68,36 +69,46 @@ function SearchBar({ value, onChange, results, onSelect, isDrawing, onStartDrawi
                 type="text"
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                className={`p-4 h-auto border-2 border-gray-500 bg-white focus:outline-none focus:border-blue-500 transition-all duration-200 ${hasResults ? 'rounded-t-2xl rounded-b-none' : 'rounded-full'}`}
+                /* Kőkeményen kikényszerítjük a világos stílust az Input-on is */
+                className={`p-4 h-auto transition-all duration-200 bg-white dark:bg-white text-black dark:text-black border-gray-300 dark:border-gray-300 placeholder:text-gray-500 shadow-2xl focus-visible:ring-gray-400 ${hasResults ? 'rounded-t-2xl rounded-b-none' : 'rounded-full'}`}
                 placeholder="Search between zones..."
             />
+            
             {hasResults && (
-                <div className="bg-white rounded-b-2xl border-2 border-t-0 border-gray-500 shadow-lg max-h-64 overflow-y-auto">
+                <div className="bg-white dark:bg-white rounded-b-2xl border-x border-b border-gray-300 dark:border-gray-300 shadow-lg max-h-64 overflow-y-auto">
                     {results.map((zone) => (
-                        <div key={zone.id} className="border-b border-gray-200 last:border-b-0">
-                            <Button
-                                variant="ghost"
-                                onClick={() => onSelect(zone)}
-                                className="w-full h-auto px-4 py-2 justify-start text-left hover:bg-gray-100 rounded-none"
-                            >
-                                <div className="text-left">
-                                    <div className="font-semibold text-sm">{zone.name}</div>
-                                    <div className="text-xs text-gray-600">{zone.hazard_level} hazard level</div>
-                                </div>
-                            </Button>
-                        </div>
+                        /* Sima natív HTML button a shadcn <Button> helyett, így nincs téma-ütközés */
+                        <button
+                            key={zone.id}
+                            type="button"
+                            onClick={() => onSelect(zone)}
+                            className="w-full flex flex-col justify-start text-left px-4 py-3 bg-white dark:bg-white hover:bg-gray-100 dark:hover:bg-gray-100 border-b border-gray-200 dark:border-gray-200 last:border-b-0 transition-colors cursor-pointer"
+                        >
+                            <span className="font-bold text-sm text-black dark:text-black">
+                                {zone.name}
+                            </span>
+                            <span className="text-xs font-medium text-gray-500 dark:text-gray-500">
+                                {zone.hazard_level} hazard level
+                            </span>
+                        </button>
                     ))}
                 </div>
             )}
+            
             <div className="mt-2 flex gap-2 items-center">
                 <Button
+                    variant="secondary"
                     onClick={onStartDrawing}
                     disabled={isDrawing}
-                    className={`px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none transition ${isDrawing ? 'opacity-60 cursor-not-allowed' : ''}`}
+                    className={`rounded-full transition shadow-md ${isDrawing ? 'opacity-60 cursor-not-allowed' : ''}`}
                 >
                     {isDrawing ? 'Drawing in progress...' : 'Select New Zone'}
                 </Button>
-                {statusMsg && <div className="text-sm text-green-600 font-medium bg-white px-3 py-1 rounded-full shadow">{statusMsg}</div>}
+                {statusMsg && (
+                    <div className="text-sm text-green-700 dark:text-green-700 font-bold bg-white dark:bg-white border border-gray-200 dark:border-gray-200 px-3 py-1 rounded-full shadow-md">
+                        {statusMsg}
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -398,12 +409,12 @@ export default function Map() {
                 <SheetContent side="left" className="w-80 p-0 overflow-y-auto">
                     {isLoadingZone ? (
                         <div className="flex items-center justify-center h-full">
-                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+                            <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
                         </div>
                     ) : selectedZone ? (
                         <>
-                            <SheetHeader className={`bg-gray-100 p-6 text-left`}>
-                                <SheetTitle className="text-xl font-bold text-gray-900">{selectedZone.name}</SheetTitle>
+                            <SheetHeader className="bg-muted/50 p-6 text-left">
+                                <SheetTitle className="text-xl font-bold">{selectedZone.name}</SheetTitle>
                                 <SheetDescription>
                                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${getHazardStyle(selectedZone.hazard_level).bg} ${getHazardStyle(selectedZone.hazard_level).text}`}>
                                         {selectedZone.hazard_level} veszély
@@ -412,30 +423,30 @@ export default function Map() {
                             </SheetHeader>
                             <div className="p-6 space-y-6">
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 mb-2">Leírás</h3>
-                                    <p className="text-sm text-gray-700">{selectedZone.description || 'Nincs megadva leírás.'}</p>
+                                    <h3 className="font-semibold mb-2">Leírás</h3>
+                                    <p className="text-sm text-muted-foreground">{selectedZone.description || 'Nincs megadva leírás.'}</p>
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold text-gray-900 mb-3">Identified hazards</h3>
+                                    <h3 className="font-semibold mb-3">Identified hazards</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {parsedHazards.length > 0 ? parsedHazards.map((hazard, i) => (
-                                            <span key={i} className="px-3 py-1 bg-gray-200 text-gray-800 rounded-full text-xs font-medium">
+                                            <span key={i} className="px-3 py-1 bg-secondary text-secondary-foreground rounded-full text-xs font-medium">
                                                 {hazard}
                                             </span>
-                                        )) : <span className="text-sm text-gray-500">No hazards identified.</span>}
+                                        )) : <span className="text-sm text-muted-foreground">No hazards identified.</span>}
                                     </div>
                                 </div>
-                                <div className="pt-4 border-t border-gray-200 flex items-center justify-between">
-                                    <p className="text-xs text-gray-500">Zone ID: {selectedZone.id}</p>
+                                <div className="pt-4 border-t border-border flex items-center justify-between">
+                                    <p className="text-xs text-muted-foreground">Zone ID: {selectedZone.id}</p>
 
                                     <div className="flex items-center gap-2">
                                         {reportState.success && (
-                                            <span className="text-xs text-green-600 font-medium">Reported successfully!</span>
+                                            <span className="text-xs text-green-500 font-medium">Reported successfully!</span>
                                         )}
                                         <Button
-                                            variant="outline"
+                                            variant="destructive"
                                             size="sm"
-                                            className="text-xs text-red-600 border-red-300 hover:bg-red-50"
+                                            className="text-xs"
                                             onClick={() => {
                                                 setReportState(prev => ({ ...prev, isOpen: true, error: null }));
                                             }}
@@ -452,11 +463,11 @@ export default function Map() {
 
             {drawState.showConfirm && !drawState.showZoneForm && drawState.pendingFeature && (
                 <div className="fixed left-1/2 -translate-x-1/2 bottom-6 z-50 w-full max-w-lg px-4">
-                    <div className="bg-white rounded-full shadow-lg p-4 flex items-center justify-between gap-4">
+                    <div className="bg-card text-card-foreground border border-border rounded-full shadow-lg p-4 flex items-center justify-between gap-4">
                         <div className="font-medium">Zone area acceptance?</div>
                         <div className="flex gap-2">
                             <Button onClick={resetDraw} variant="outline" className="rounded-full">Decline</Button>
-                            <Button onClick={() => dispatch({ type: 'SET_SHOW_FORM', payload: true })} className="rounded-full bg-green-600 hover:bg-green-700 text-white">
+                            <Button onClick={() => dispatch({ type: 'SET_SHOW_FORM', payload: true })} className="rounded-full">
                                 Continue to Data Entry
                             </Button>
                         </div>
@@ -526,7 +537,7 @@ export default function Map() {
                             type="button"
                             onClick={submitNewZone}
                             disabled={!drawState.newZoneData.name}
-                            className="bg-blue-600 hover:bg-blue-700 cursor-pointer font-bold"
+                            className="cursor-pointer font-bold"
                         >
                             <Save className="mr-2 h-4 w-4" />
                             Mentés
@@ -541,8 +552,8 @@ export default function Map() {
                     setReportReason('');
                 }
             }}>
-                <SheetContent side="right" className="sm:max-w-md">
-                    <SheetHeader>
+                <SheetContent side="right" className="sm:max-w-md px-4">
+                    <SheetHeader className='pl-0'>
                         <SheetTitle>Report Zone</SheetTitle>
                         <SheetDescription>
                             Please explain why you find the following zone problematic: <br />
@@ -562,7 +573,7 @@ export default function Map() {
                         </div>
 
                         {reportState.error && (
-                            <p className="text-sm text-red-600 bg-red-50 p-3 rounded-md">{reportState.error}</p>
+                            <p className="text-sm text-destructive bg-destructive/10 p-3 rounded-md">{reportState.error}</p>
                         )}
                     </div>
                     <SheetFooter>
@@ -578,12 +589,12 @@ export default function Map() {
                         </Button>
                         <Button
                             type="button"
+                            variant="destructive"
                             onClick={handleReportSubmit}
                             disabled={!reportReason.trim() || reportState.isLoading}
-                            className="bg-red-600 hover:bg-red-700 text-white"
                         >
                             {reportState.isLoading ? (
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
+                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2" />
                             ) : null}
                             Send Report
                         </Button>

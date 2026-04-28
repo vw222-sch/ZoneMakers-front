@@ -93,14 +93,14 @@ export default function AdminPostReports() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl">
                 Error loading reports: {error}
             </div>
         );
@@ -109,16 +109,15 @@ export default function AdminPostReports() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">Post Reports</h2>
+                <h2 className="text-2xl font-extrabold tracking-tight">Post Reports</h2>
                 <p className="text-muted-foreground">Review reported posts and comments.</p>
             </div>
 
-            {/* Post details */}
             {selectedPostId && (
-                <div className="border rounded-md bg-white shadow-sm p-6">
+                <div className="border border-border rounded-xl bg-card p-6">
                     <div className="flex items-start justify-between mb-4">
                         <h3 className="text-lg font-semibold flex items-center gap-2">
-                            <MessageSquare className="h-5 w-5" />
+                            <MessageSquare className="h-5 w-5 text-muted-foreground" />
                             Post details: {selectedPostId}
                         </h3>
                         <div className="space-x-2">
@@ -139,39 +138,39 @@ export default function AdminPostReports() {
                     
                     {loadingPost ? (
                         <div className="flex justify-center py-4">
-                            <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                            <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                         </div>
                     ) : (
                         <div className="space-y-4">
                             {postData && (
-                                <div className="p-4 bg-gray-50 rounded-md">
+                                <div className="p-4 bg-background rounded-xl border border-border">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="font-medium">{postData.username}</span>
-                                        <span className="text-gray-400">@{postData.handle}</span>
-                                        <span className="text-xs text-gray-400">
+                                        <span className="font-medium text-foreground">{postData.username}</span>
+                                        <span className="text-muted-foreground">@{postData.handle}</span>
+                                        <span className="text-xs text-muted-foreground/70">
                                             {new Date(postData.created_at).toLocaleString("hu-HU")}
                                         </span>
                                     </div>
                                     <p className="whitespace-pre-wrap">{postData.content}</p>
                                     {postData.image && (
-                                        <img src={postData.image} alt="Poszt kép" className="mt-2 max-w-md rounded-md" />
+                                        <img src={postData.image} alt="Poszt kép" className="mt-2 max-w-md rounded-md border border-border" />
                                     )}
                                 </div>
                             )}
                             
                             {replies.length > 1 && (
                                 <div>
-                                    <h4 className="font-medium text-sm text-gray-600 mb-2">Replies ({replies.length - 1}):</h4>
+                                    <h4 className="font-medium text-sm text-muted-foreground mb-2">Replies ({replies.length - 1}):</h4>
                                     <div className="space-y-2">
                                         {replies.slice(1).map(reply => (
-                                            <div key={reply.id} className="p-3 bg-gray-50 rounded-md text-sm">
+                                            <div key={reply.id} className="p-3 bg-background rounded-xl border border-border text-sm">
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <span className="font-medium">{reply.username}</span>
-                                                    <span className="text-gray-400 text-xs">
+                                                    <span className="text-muted-foreground text-xs">
                                                         {new Date(reply.created_at).toLocaleString("hu-HU")}
                                                     </span>
                                                 </div>
-                                                <p className="whitespace-pre-wrap">{reply.content}</p>
+                                                <p className="whitespace-pre-wrap text-muted-foreground">{reply.content}</p>
                                             </div>
                                         ))}
                                     </div>
@@ -182,10 +181,10 @@ export default function AdminPostReports() {
                 </div>
             )}
 
-            <div className="border rounded-md bg-white shadow-sm">
+            <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent">
                             <TableHead className="w-20">Ticket ID</TableHead>
                             <TableHead>Post ID</TableHead>
                             <TableHead>Reporter ID</TableHead>
@@ -196,16 +195,16 @@ export default function AdminPostReports() {
                     <TableBody>
                         {reports.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center h-24 text-gray-500">
+                                <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                                     No post reports found.
                                 </TableCell>
                             </TableRow>
                         ) : reports.map((report) => (
-                            <TableRow key={report.id} className={selectedPostId === report.report_id ? "bg-blue-50" : ""}>
+                            <TableRow key={report.id} className={`${selectedPostId === report.report_id ? "bg-muted/50" : ""}`}>
                                 <TableCell className="font-medium">#{report.id}</TableCell>
                                 <TableCell className="font-semibold font-mono">{report.report_id}</TableCell>
-                                <TableCell>{report.user_id}</TableCell>
-                                <TableCell className="max-w-md truncate">{report.reason}</TableCell>
+                                <TableCell className="text-muted-foreground">{report.user_id}</TableCell>
+                                <TableCell className="max-w-md truncate text-muted-foreground">{report.reason}</TableCell>
                                 <TableCell className="text-right space-x-2">
                                     <Button 
                                         variant="outline" 
@@ -236,7 +235,7 @@ export default function AdminPostReports() {
                     <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>
                         <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                     </Button>
-                    <div className="text-sm text-gray-600 font-medium px-2">{page}. page</div>
+                    <div className="text-sm text-muted-foreground font-medium px-2">{page}. page</div>
                     <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
                         Next <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>

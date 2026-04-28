@@ -120,87 +120,90 @@ export default function News() {
     }, [activeCategory]);
 
     return (
-        <div className="container mx-auto max-w-6xl px-4 min-h-screen pb-12">
-            <h1 className="fl-text-4xl/6xl font-bold tracking-widest text-center my-16">
-                Travel Safety News
-            </h1>
+        <div className="bg-background text-foreground min-h-screen">
+            <div className="container mx-auto max-w-6xl px-4 pb-12">
+                <h1 className="fl-text-4xl/6xl font-bold tracking-widest text-center my-16">
+                    Travel Safety News
+                </h1>
 
-            <div className="mb-10">
-                <p className="text-sm font-semibold text-gray-500 tracking-wider uppercase mb-3">
-                    Filter by topic
-                </p>
-                <div className="flex flex-wrap gap-2">
-                    {CATEGORIES.map((category) => (
-                        <button
-                            key={category.id}
-                            onClick={() => setActiveCategory(category.id)}
-                            disabled={isLoading}
-                            className={cn(
-                                "px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 cursor-pointer",
-                                activeCategory === category.id
-                                    ? "bg-black text-white border-black"
-                                    : "bg-white text-gray-600 border-gray-300 hover:border-black hover:text-black"
-                            )}
-                        >
-                            {category.label}
-                        </button>
+                <div className="mb-10">
+                    <p className="text-sm font-semibold text-muted-foreground tracking-wider uppercase mb-3">
+                        Filter by topic
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                        {CATEGORIES.map((category) => (
+                            <button
+                                key={category.id}
+                                onClick={() => setActiveCategory(category.id)}
+                                disabled={isLoading}
+                                className={cn(
+                                    "px-4 py-2 rounded-full text-sm font-semibold border-2 transition-all duration-200 cursor-pointer",
+                                    activeCategory === category.id
+                                        ? "bg-primary text-primary-foreground border-primary font-bold"
+                                        : "bg-secondary text-secondary-foreground border-border hover:border-foreground/50 hover:text-foreground"
+                                )}
+                            >
+                                {category.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                {error && (
+                    <Alert variant="destructive">
+                        <TriangleAlertIcon className="h-5! w-5!" />
+                        <AlertTitle className='font-bold tracking-wide'>Failed to load news</AlertTitle>
+                        <AlertDescription>Please try again or reload the page.</AlertDescription>
+                    </Alert>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {news.map((article, index) => (
+                        <NewsCard
+                            key={`${article.id}-${index}`}
+                            image={article.image}
+                            title={article.title}
+                            description={article.summary || article.text}
+                            url={article.url}
+                            publishDate={article.publish_date}
+                            sourceCountry={article.source_country}
+                        />
                     ))}
                 </div>
-            </div>
 
-            {error && (
-                <Alert className='bg-destructive dark:bg-destructive/60 border-none text-white'>
-                    <TriangleAlertIcon className="h-5! w-5! text-white" />
-                    <AlertTitle className='font-bold tracking-wide'>Failed to load news</AlertTitle>
-                    <AlertDescription className='text-white/80'>Please try again or reload the page.</AlertDescription>
-                </Alert>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {news.map((article, index) => (
-                    <NewsCard
-                        key={`${article.id}-${index}`}
-                        image={article.image}
-                        title={article.title}
-                        description={article.summary || article.text}
-                        url={article.url}
-                        publishDate={article.publish_date}
-                        sourceCountry={article.source_country}
-                    />
-                ))}
-            </div>
-
-            {!isLoading && !error && news.length === 0 && (
-                <Alert className='border-none bg-sky-600 text-white dark:bg-sky-400'>
-                    <CircleAlertIcon className="h-5! w-5! text-white" />
-                    <AlertTitle className='font-bold tracking-wide'>No articles found for this topic.</AlertTitle>
-                    <AlertDescription className='text-white/80'>Please try selecting a different category or check back later for updates.</AlertDescription>
-                </Alert>
-            )}
-
-            <div className="flex flex-col items-center justify-center mt-12 h-16">
-                {isLoading && news.length === 0 ? (
-                    <p className="text-center fl-text-2xl/4xl animate-pulse font-bold">
-                        Fetching alerts...
-                    </p>
-                ) : (
-                    news.length > 0 && (
-                        <Button
-                            onClick={() => fetchNews(offset + LIMIT, activeCategory, true)}
-                            disabled={isLoading}
-                            className="font-bold px-8 py-6 rounded-full cursor-pointer fl-text-sm/base"
-                        >
-                            {isLoading ? (
-                                <>
-                                    <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                                    Loading more...
-                                </>
-                            ) : (
-                                "Load More News"
-                            )}
-                        </Button>
-                    )
+                {!isLoading && !error && news.length === 0 && (
+                    <Alert className='border-sky-500/20 bg-sky-500/10 text-sky-500'>
+                        <CircleAlertIcon className="h-5! w-5! text-sky-500" />
+                        <AlertTitle className='font-bold tracking-wide'>No articles found for this topic.</AlertTitle>
+                        <AlertDescription>Please try selecting a different category or check back later for updates.</AlertDescription>
+                    </Alert>
                 )}
+
+                <div className="flex flex-col items-center justify-center mt-12 h-16">
+                    {isLoading && news.length === 0 ? (
+                        <p className="text-center fl-text-2xl/4xl animate-pulse font-bold text-muted-foreground">
+                            Fetching alerts...
+                        </p>
+                    ) : (
+                        news.length > 0 && (
+                            <Button
+                                variant="outline"
+                                onClick={() => fetchNews(offset + LIMIT, activeCategory, true)}
+                                disabled={isLoading}
+                                className="font-bold px-8 py-6 rounded-full cursor-pointer fl-text-sm/base"
+                            >
+                                {isLoading ? (
+                                    <>
+                                        <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                                        Loading more...
+                                    </>
+                                ) : (
+                                    "Load More News"
+                                )}
+                            </Button>
+                        )
+                    )}
+                </div>
             </div>
         </div>
     );

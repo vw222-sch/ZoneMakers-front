@@ -91,10 +91,10 @@ export default function AdminZoneReports() {
 
     const getHazardBadgeColor = (level: string) => {
         switch (level?.toLowerCase()) {
-            case 'high': return 'bg-red-500 hover:bg-red-600';
-            case 'medium': return 'bg-yellow-500 hover:bg-yellow-600';
-            case 'low': return 'bg-green-500 hover:bg-green-600';
-            default: return 'bg-gray-500';
+            case 'high': return 'bg-red-500/20 text-red-500 border-none';
+            case 'medium': return 'bg-yellow-500/20 text-yellow-500 border-none';
+            case 'low': return 'bg-green-500/20 text-green-500 border-none';
+            default: return 'bg-secondary text-foreground border-none';
         }
     };
 
@@ -108,14 +108,14 @@ export default function AdminZoneReports() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl">
                 Error loading reports: {error}
             </div>
         );
@@ -124,7 +124,7 @@ export default function AdminZoneReports() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">Zone Reports</h2>
+                <h2 className="text-2xl font-extrabold tracking-tight">Zone Reports</h2>
                 <p className="text-muted-foreground">Management of problematic zones reported by users.</p>
             </div>
 
@@ -133,7 +133,7 @@ export default function AdminZoneReports() {
                     <CardHeader>
                         <div className="flex items-start justify-between">
                             <CardTitle className="flex items-center gap-2">
-                                <MapPin className="h-5 w-5" />
+                                <MapPin className="h-5 w-5 text-muted-foreground" />
                                 Zone Details: #{selectedZoneId}
                             </CardTitle>
                             <div className="space-x-2">
@@ -155,17 +155,17 @@ export default function AdminZoneReports() {
                     <CardContent>
                         {loadingZone ? (
                             <div className="flex justify-center py-4">
-                                <Loader2 className="h-6 w-6 animate-spin text-gray-400" />
+                                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                             </div>
                         ) : zoneData ? (
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="space-y-3">
                                     <div>
-                                        <span className="text-sm text-gray-500">Name:</span>
-                                        <p className="font-semibold">{zoneData.name}</p>
+                                        <span className="text-sm text-muted-foreground">Name:</span>
+                                        <p className="font-semibold text-foreground">{zoneData.name}</p>
                                     </div>
                                     <div>
-                                        <span className="text-sm text-gray-500">Hazard Level:</span>
+                                        <span className="text-sm text-muted-foreground">Hazard Level:</span>
                                         <div className="mt-1">
                                             <Badge className={getHazardBadgeColor(zoneData.hazard_level)}>
                                                 {zoneData.hazard_level?.toUpperCase() || 'UNKNOWN'}
@@ -173,17 +173,17 @@ export default function AdminZoneReports() {
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="text-sm text-gray-500">Description:</span>
-                                        <p className="mt-1 text-sm">{zoneData.description || "No description available"}</p>
+                                        <span className="text-sm text-muted-foreground">Description:</span>
+                                        <p className="mt-1 text-sm text-foreground">{zoneData.description || "No description available"}</p>
                                     </div>
                                     <div>
-                                        <span className="text-sm text-gray-500">Author ID:</span>
-                                        <p className="font-medium">{zoneData.author}</p>
+                                        <span className="text-sm text-muted-foreground">Author ID:</span>
+                                        <p className="font-medium text-foreground">{zoneData.author}</p>
                                     </div>
                                 </div>
                                 <div className="space-y-3">
                                     <div>
-                                        <span className="text-sm text-gray-500">Hazards:</span>
+                                        <span className="text-sm text-muted-foreground">Hazards:</span>
                                         <div className="flex flex-wrap gap-1 mt-1">
                                             {(safeParse(zoneData.hazards, []) as string[]).map((h, i) => (
                                                 <Badge key={i} variant="outline">{h}</Badge>
@@ -191,25 +191,25 @@ export default function AdminZoneReports() {
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="text-sm text-gray-500">Images:</span>
+                                        <span className="text-sm text-muted-foreground">Images:</span>
                                         <div className="flex flex-wrap gap-2 mt-1">
                                             {(safeParse(zoneData.images, []) as string[]).map((img, i) => (
                                                 <img 
                                                     key={i} 
                                                     src={img} 
                                                     alt={`Zone image ${i + 1}`}
-                                                    className="w-20 h-20 object-cover rounded-md border"
+                                                    className="w-20 h-20 object-cover rounded-md border border-border"
                                                 />
                                             ))}
                                             {(safeParse(zoneData.images, []) as string[]).length === 0 && (
-                                                <span className="text-sm text-gray-400">No images available</span>
+                                                <span className="text-sm text-muted-foreground">No images available</span>
                                             )}
                                         </div>
                                     </div>
                                     <div>
-                                        <span className="text-sm text-gray-500">Request Status:</span>
+                                        <span className="text-sm text-muted-foreground">Request Status:</span>
                                         <p className="mt-1">
-                                            <Badge variant={zoneData.is_request === 1 ? "default" : "secondary"}>
+                                            <Badge variant="secondary" className={zoneData.is_request === 1 ? "bg-yellow-500/20 text-yellow-500 border-none" : "bg-green-500/20 text-green-500 border-none"}>
                                                 {zoneData.is_request === 1 ? "Pending" : "Accepted"}
                                             </Badge>
                                         </p>
@@ -217,16 +217,16 @@ export default function AdminZoneReports() {
                                 </div>
                             </div>
                         ) : (
-                            <p className="text-gray-500">Failed to load zone data.</p>
+                            <p className="text-muted-foreground">Failed to load zone data.</p>
                         )}
                     </CardContent>
                 </Card>
             )}
 
-            <div className="border rounded-md bg-white shadow-sm">
+            <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent">
                             <TableHead className="w-20">Ticket ID</TableHead>
                             <TableHead>Zone ID</TableHead>
                             <TableHead>Reporter ID</TableHead>
@@ -237,16 +237,16 @@ export default function AdminZoneReports() {
                     <TableBody>
                         {reports.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={5} className="text-center h-24 text-gray-500">
+                                <TableCell colSpan={5} className="text-center h-24 text-muted-foreground">
                                     No zone reports available.
                                 </TableCell>
                             </TableRow>
                         ) : reports.map((report) => (
-                            <TableRow key={report.id} className={selectedZoneId === parseInt(report.report_id, 10) ? "bg-blue-50" : ""}>
+                            <TableRow key={report.id} className={`${selectedZoneId === parseInt(report.report_id, 10) ? "bg-muted/50" : ""}`}>
                                 <TableCell className="font-medium">#{report.id}</TableCell>
                                 <TableCell className="font-semibold">{report.report_id}</TableCell>
-                                <TableCell>{report.user_id}</TableCell>
-                                <TableCell className="max-w-md truncate">{report.reason}</TableCell>
+                                <TableCell className="text-muted-foreground">{report.user_id}</TableCell>
+                                <TableCell className="max-w-md truncate text-muted-foreground">{report.reason}</TableCell>
                                 <TableCell className="text-right space-x-2">
                                     <Button 
                                         variant="outline" 
@@ -277,7 +277,7 @@ export default function AdminZoneReports() {
                     <Button variant="outline" size="sm" onClick={() => setPage(p => Math.max(p - 1, 1))} disabled={page === 1}>
                         <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                     </Button>
-                    <div className="text-sm text-gray-600 font-medium px-2">{page}. page</div>
+                    <div className="text-sm text-muted-foreground font-medium px-2">{page}. page</div>
                     <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page === totalPages}>
                         Next <ChevronRight className="w-4 h-4 ml-1" />
                     </Button>

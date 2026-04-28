@@ -51,7 +51,7 @@ export const updateUserPassword = async (targetId: number, newPassword: string):
 
 // Updates current user's pinned badges
 export const updateUserPinnedBadges = async (targetId: number, pinnedBadges: number[]): Promise<void> => {
-    await api.apiPatch('/user/pinned_badges', { target_id: targetId, new_pinned_badges: JSON.stringify(pinnedBadges) });
+    await api.apiPatch('/user/pinned_badges', { target_id: targetId, new_pinned_badges: pinnedBadges });
 };
 
 // Updates current user's region

@@ -133,38 +133,39 @@ export interface TravelLog {
 export interface Region {
     id: number;
     name: string;
+    image: string; // Hozzáadtam az image URL-t is a kényelem kedvéért
 }
 
 export const REGIONS: Region[] = [
-    { id: 0, name: "Nordic Region" },
-    { id: 1, name: "Mediterranean Region" },
-    { id: 2, name: "New World Region" },
-    { id: 3, name: "Iberian Region" },
-    { id: 4, name: "British Isles Region" },
-    { id: 5, name: "Visegrad Region" },
-    { id: 6, name: "Germanic Region" },
-    { id: 7, name: "Baltic Region" },
-    { id: 8, name: "French Region" },
-    { id: 9, name: "Pan-Slavic Region" },
-    { id: 10, name: "Black Sea Region" },
-    { id: 11, name: "Ex-Yugoslavian Region" },
-    { id: 12, name: "Benelux Region" },
+    { id: 1, name: "Baltic Region", image: "/Banners/Baltic Region.png" },
+    { id: 2, name: "Benelux Region", image: "/Banners/Benelux Region.png" },
+    { id: 3, name: "Black Sea Region", image: "/Banners/Black Sea Region.png" },
+    { id: 4, name: "British Isles Region", image: "/Banners/British Isles Region.png" },
+    { id: 5, name: "Ex-Yugoslavian Region", image: "/Banners/Ex-Yugoslavian Region.png" },
+    { id: 6, name: "French Region", image: "/Banners/French Region.png" },
+    { id: 7, name: "Germanic Region", image: "/Banners/Germanic Region.png" },
+    { id: 8, name: "Iberian Region", image: "/Banners/Iberian Region.png" },
+    { id: 9, name: "Mediterranean Region", image: "/Banners/Mediterranean Region.png" },
+    { id: 10, name: "New World Region", image: "/Banners/New World Region.png" },
+    { id: 11, name: "Nordic Region", image: "/Banners/Nordic Region.png" },
+    { id: 12, name: "Pan-Slavic Region", image: "/Banners/Pan-Slavic Region.png" },
+    { id: 13, name: "Visegrad Region", image: "/Banners/Visegrad Region.png" },
 ];
 
 export const REGION_COLORS: Record<string, string> = {
-    "Nordic Region": "#16D8FA",
+    "Baltic Region": "#6CD405",
+    "Benelux Region": "#CE009B",
+    "Black Sea Region": "#B87333",
+    "British Isles Region": "#C8102E",
+    "Ex-Yugoslavian Region": "#FF4500",
+    "French Region": "#318CE7",
+    "Germanic Region": "#7EB8C9",
+    "Iberian Region": "#F1BF00",
     "Mediterranean Region": "#008C45",
     "New World Region": "#1CCD92",
-    "Iberian Region": "#F1BF00",
-    "British Isles Region": "#C8102E",
-    "Visegrad Region": "#6C3BAA",
-    "Germanic Region": "#7EB8C9",
-    "Baltic Region": "#6CD405",
-    "French Region": "#318CE7",
+    "Nordic Region": "#16D8FA",
     "Pan-Slavic Region": "#E8A0E8",
-    "Black Sea Region": "#B87333",
-    "Ex-Yugoslavian Region": "#FF4500",
-    "Benelux Region": "#CE009B",
+    "Visegrad Region": "#6C3BAA",
 };
 
 export const getRegionById = (id: number): Region | undefined =>

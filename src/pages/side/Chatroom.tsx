@@ -225,8 +225,8 @@ export default function Chatroom() {
     const handleReportSubmit = async () => {
         if (!reportPostId) return;
 
-        const finalReason = reportReason === "other" 
-            ? reportCustomReason.trim() 
+        const finalReason = reportReason === "other"
+            ? reportCustomReason.trim()
             : REPORT_REASONS.find(r => r.value === reportReason)?.label || reportReason;
 
         if (!finalReason) {
@@ -280,238 +280,218 @@ export default function Chatroom() {
 
     return (
         <>
-            <div className="container mx-auto max-w-4xl space-y-2 mt-8 px-4">
-                <h1 className="text-4xl font-bold tracking-widest text-center my-8">Chat</h1>
+            <div className="bg-background text-foreground min-h-screen">
+                <div className="container mx-auto max-w-4xl space-y-2 mt-8 px-4">
+                    <h1 className="text-4xl font-bold tracking-widest text-center my-8">Chat</h1>
 
-                {currentToken ? (
-                    <Card className="border-0 shadow-lg mb-8">
-                        <CardContent className="pt-6 space-y-3">
-                            <Textarea
-                                placeholder="Share your thoughts with us... (mention users with @handle)"
-                                value={postText}
-                                onChange={(e) => setPostText(e.target.value)}
-                                className="resize-none rounded-lg border-gray-200 focus:ring-2 focus:ring-blue-500"
-                                rows={3}
-                            />
-                            <div className="flex gap-2">
-                                <div className="relative flex-1">
-                                    <ImageIcon className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Image URL (Optional)"
-                                        value={imageUrl}
-                                        onChange={(e) => setImageUrl(e.target.value)}
-                                        className="pl-9 rounded-lg border-gray-200"
-                                    />
+                    {currentToken ? (
+                        <Card className="shadow-lg mb-8">
+                            <CardContent className="pt-6 space-y-3">
+                                <Textarea
+                                    placeholder="Share your thoughts with us... (mention users with @handle)"
+                                    value={postText}
+                                    onChange={(e) => setPostText(e.target.value)}
+                                    className="resize-none"
+                                    rows={3}
+                                />
+                                <div className="flex gap-2">
+                                    <div className="relative flex-1">
+                                        <ImageIcon className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                                        <Input
+                                            placeholder="Image URL (Optional)"
+                                            value={imageUrl}
+                                            onChange={(e) => setImageUrl(e.target.value)}
+                                            className="pl-9"
+                                        />
+                                    </div>
+                                    <Button
+                                        onClick={handlePostSubmit}
+                                        disabled={!postText.trim()}
+                                        className="w-32 font-bold"
+                                        variant="default"
+                                    >
+                                        <SendIcon className="w-4 h-4 mr-2" />
+                                        Post
+                                    </Button>
                                 </div>
-                                <Button
-                                    onClick={handlePostSubmit}
-                                    disabled={!postText.trim()}
-                                    className="w-32"
-                                >
-                                    <SendIcon className="w-4 h-4 mr-2" />
-                                    Post
-                                </Button>
-                            </div>
-                        </CardContent>
-                    </Card>
-                ) : (
-                    <div className="text-center p-6 bg-gray-100 rounded-xl text-gray-600 font-medium mb-8">
-                        You need to be logged in to participate in the chat!
-                    </div>
-                )}
-            </div>
-
-            <div className="flex flex-col gap-8 items-center px-4 pb-12">
-                {posts.map((post) => (
-                    <Card key={post.id} className="max-w-4xl w-full shadow-lg border-0 hover:shadow-xl transition-shadow relative">
-                        <div className="absolute top-4 right-4 flex gap-2 z-10">
-                            {canEditOrDelete(post.author_id) && (
-                                <>
-                                    <button onClick={() => startEditing(post)} className="text-gray-400 hover:text-blue-600 transition p-1" title="Szerkesztés">
-                                        <Edit2 className="w-4 h-4" />
-                                    </button>
-                                    <button onClick={() => handleDelete(post.id)} className="text-gray-400 hover:text-red-600 transition p-1" title="Törlés">
-                                        <Trash2 className="w-4 h-4" />
-                                    </button>
-                                </>
-                            )}
-                            {!canEditOrDelete(post.author_id) && (
-                                <button onClick={() => openReportDialog(post.id)} className="text-gray-400 hover:text-orange-500 transition p-1" title="Jelentés">
-                                    <Flag className="w-4 h-4" />
-                                </button>
-                            )}
+                            </CardContent>
+                        </Card>
+                    ) : (
+                        <div className="text-center p-6 bg-card rounded-xl text-muted-foreground font-medium mb-8 border border-border">
+                            You need to be logged in to participate in the chat!
                         </div>
+                    )}
+                </div>
 
-                        <CardHeader className="flex items-center justify-between gap-3 pb-4 pt-6">
-                            <div className="flex items-center gap-3 flex-1">
-                                <button
-                                    onClick={() => navigate(`/user-details/${post.author_id}`)}
-                                    className="flex items-center gap-3 hover:opacity-80 transition group cursor-pointer"
-                                >
-                                    <Avatar className="ring-2 ring-black w-12 h-12">
-                                        <AvatarImage src={post.avatar || undefined} alt={post.username} />
-                                        <AvatarFallback>{post.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                                    </Avatar>
-                                    <div className="text-left">
-                                        <div className="flex items-center gap-1">
-                                            <CardTitle className="flex items-center gap-1 text-base group-hover:text-blue-600 transition">
-                                                {post.username}
-                                                {post.verified === 1 && (
-                                                    <BadgeCheckIcon className="size-4 fill-sky-600 stroke-white dark:fill-sky-400" />
-                                                )}
-                                            </CardTitle>
-                                        </div>
-                                        <CardDescription className="flex items-center gap-2">
-                                            @{post.handle}
-                                            <span className="text-gray-400">·</span>
-                                            <span className="text-gray-400">{formatDate(post.created_at)}</span>
-                                        </CardDescription>
-                                    </div>
-                                </button>
-                            </div>
-                        </CardHeader>
-
-                        <CardContent className="space-y-4">
-                            {post.image && (
-                                <img src={post.image} alt="Post image" className="aspect-video w-full rounded-md object-cover" />
-                            )}
-
-                            {editingPostId === post.id ? (
-                                <div className="space-y-2 mt-2 p-3 bg-gray-50 rounded-lg border border-gray-200 relative z-20">
-                                    <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full bg-white" rows={4} />
-                                    <div className="flex gap-2 justify-end">
-                                        <Button onClick={() => setEditingPostId(null)} variant="ghost" size="sm">Cancel</Button>
-                                        <Button onClick={() => handleEditSave(post.id)} size="sm">Save</Button>
-                                    </div>
-                                </div>
-                            ) : (
-                                <p className="text-lg font-semibold tracking-wide text-gray-700 whitespace-pre-wrap">{post.content}</p>
-                            )}
-
-                            <div className="border-t pt-4 space-y-4">
-                                <button
-                                    onClick={() => toggleReplies(post.id)}
-                                    className="text-sm font-medium text-blue-600 hover:text-blue-700 transition"
-                                >
-                                    {post.replies_count === 0
-                                        ? "Be the first to comment!"
-                                        : `${post.replies_count} ${post.replies_count === 1 ? "reply" : "replies"} view`}
-                                </button>
-
-                                {expandedReplies[post.id] && (
-                                    <div className="space-y-4 mt-4 pt-4 border-t border-gray-100">
-                                        {repliesData[post.id]?.map((reply) => {
-                                            const isTagged = loggedInHandle && reply.content.includes(`@${loggedInHandle}`);
-
-                                            return (
-                                                <div key={reply.id} className={`group p-4 rounded-lg border-l-4 transition relative ${isTagged ? "bg-yellow-50 border-yellow-400" : "bg-gray-50 border-gray-300"}`}>
-                                                    <div className="absolute top-3 right-3 flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition z-10">
-                                                        {canEditOrDelete(reply.author_id) && (
-                                                            <>
-                                                                <button onClick={() => startEditing(reply)} className="text-gray-400 hover:text-blue-600">
-                                                                    <Edit2 className="w-3.5 h-3.5" />
-                                                                </button>
-                                                                <button onClick={() => handleDelete(reply.id, post.id)} className="text-gray-400 hover:text-red-600">
-                                                                    <Trash2 className="w-3.5 h-3.5" />
-                                                                </button>
-                                                            </>
-                                                        )}
-                                                        {!canEditOrDelete(reply.author_id) && (
-                                                            <button onClick={() => openReportDialog(reply.id)} className="text-gray-400 hover:text-orange-500">
-                                                                <Flag className="w-3.5 h-3.5" />
-                                                            </button>
-                                                        )}
-                                                    </div>
-
-                                                    <button
-                                                        onClick={() => navigate(`/user-details/${reply.author_id}`)}
-                                                        className="flex items-center gap-2 mb-2 hover:opacity-80 transition cursor-pointer"
-                                                    >
-                                                        <Avatar className="w-8 h-8">
-                                                            <AvatarImage src={reply.avatar || undefined} alt={reply.username} />
-                                                            <AvatarFallback>{reply.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
-                                                        </Avatar>
-                                                        <div className="flex flex-col items-start">
-                                                            <span className="font-semibold text-sm flex items-center gap-1">
-                                                                {reply.username}
-                                                                {reply.verified === 1 && (
-                                                                    <BadgeCheckIcon className="size-3 fill-sky-600 stroke-white" />
-                                                                )}
-                                                            </span>
-                                                            <span className="text-xs text-gray-500">
-                                                                @{reply.handle}
-                                                                <span className="text-gray-400 mx-1">·</span>
-                                                                {formatDate(reply.created_at)}
-                                                            </span>
-                                                        </div>
-                                                    </button>
-
-                                                    {editingPostId === reply.id ? (
-                                                        <div className="space-y-2 mt-2 relative z-20">
-                                                            <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full text-sm bg-white" rows={2} />
-                                                            <div className="flex gap-2 justify-end">
-                                                                <Button onClick={() => setEditingPostId(null)} variant="ghost" size="sm" className="h-7 text-xs">Cancel</Button>
-                                                                <Button onClick={() => handleEditSave(reply.id, post.id)} size="sm" className="h-7 text-xs">Save</Button>
-                                                            </div>
-                                                        </div>
-                                                    ) : (
-                                                        <p className="text-sm text-gray-800 whitespace-pre-wrap leading-relaxed">{reply.content}</p>
-                                                    )}
-                                                </div>
-                                            );
-                                        })}
-
-                                        {currentToken && (
-                                            <div className="flex flex-col gap-3 mt-4">
-                                                <Textarea
-                                                    placeholder="Write a reply... (Mention users with @handle)"
-                                                    value={replyText[post.id] || ""}
-                                                    onChange={(e) => setReplyText({ ...replyText, [post.id]: e.target.value })}
-                                                    className="resize-none rounded-lg border-gray-200"
-                                                    rows={2}
-                                                />
-                                                <Button
-                                                    onClick={() => handleReplySubmit(post.id)}
-                                                    disabled={!replyText[post.id]?.trim()}
-                                                    className="w-full sm:w-auto self-end cursor-pointer"
-                                                >
-                                                    <SendIcon className="w-4 h-4 mr-2" />
-                                                    Send Reply
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
+                <div className="flex flex-col gap-8 items-center px-4 pb-12">
+                    {posts.map((post) => (
+                        <Card key={post.id} className="max-w-4xl w-full shadow-lg hover:shadow-xl transition-shadow relative">
+                            <div className="absolute top-4 right-4 flex gap-2 z-10">
+                                {canEditOrDelete(post.author_id) && (
+                                    <>
+                                        <button onClick={() => startEditing(post)} className="text-muted-foreground hover:text-primary transition p-1" title="Szerkesztés">
+                                            <Edit2 className="w-4 h-4" />
+                                        </button>
+                                        <button onClick={() => handleDelete(post.id)} className="text-muted-foreground hover:text-destructive transition p-1" title="Törlés">
+                                            <Trash2 className="w-4 h-4" />
+                                        </button>
+                                    </>
+                                )}
+                                {!canEditOrDelete(post.author_id) && (
+                                    <button onClick={() => openReportDialog(post.id)} className="text-muted-foreground hover:text-orange-500 transition p-1" title="Jelentés">
+                                        <Flag className="w-4 h-4" />
+                                    </button>
                                 )}
                             </div>
-                        </CardContent>
-                    </Card>
-                ))}
 
-                {posts.length === 0 && (
-                    <div className="text-gray-500 text-lg py-12 flex flex-col items-center gap-2">
-                        <ImageIcon className="w-12 h-12 text-gray-300" />
-                        There are no posts in this region yet.
-                    </div>
-                )}
+                            <CardHeader className="flex items-center justify-between gap-3 pb-4 pt-6">
+                                <div className="flex items-center gap-3 flex-1">
+                                    <button
+                                        onClick={() => navigate(`/user-details/${post.author_id}`)}
+                                        className="flex items-center gap-3 hover:opacity-80 transition group cursor-pointer"
+                                    >
+                                        <Avatar className="ring-2 ring-border w-12 h-12">
+                                            <AvatarImage src={post.avatar || undefined} alt={post.username} />
+                                            <AvatarFallback>{post.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                        </Avatar>
+                                        <div className="text-left">
+                                            <div className="flex items-center gap-1">
+                                                <CardTitle className="flex items-center gap-1 text-base group-hover:text-primary transition">
+                                                    {post.username}
+                                                    {post.verified === 1 && (
+                                                        <BadgeCheckIcon className="size-4 fill-sky-500 stroke-background" />
+                                                    )}
+                                                </CardTitle>
+                                            </div>
+                                            <CardDescription className="flex items-center gap-2">
+                                                @{post.handle}
+                                                <span className="text-muted-foreground/50">·</span>
+                                                <span className="text-muted-foreground">{formatDate(post.created_at)}</span>
+                                            </CardDescription>
+                                        </div>
+                                    </button>
+                                </div>
+                            </CardHeader>
+
+                            <CardContent className="space-y-4">
+                                {post.image && (
+                                    <img src={post.image} alt="Post image" className="aspect-video w-full rounded-md object-cover bg-secondary" />
+                                )}
+
+                                {editingPostId === post.id ? (
+                                    <div className="space-y-2 mt-2 p-3 bg-secondary rounded-lg border border-border relative z-20">
+                                        <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full" rows={4} />
+                                        <div className="flex gap-2 justify-end">
+                                            <Button onClick={() => setEditingPostId(null)} variant="ghost" size="sm">Cancel</Button>
+                                            <Button onClick={() => handleEditSave(post.id)} size="sm" variant="default">Save</Button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="text-lg font-semibold tracking-wide whitespace-pre-wrap">{post.content}</p>
+                                )}
+
+                                <div className="border-t border-border pt-4 space-y-4">
+                                    <button
+                                        onClick={() => toggleReplies(post.id)}
+                                        className="text-sm font-medium text-primary hover:text-primary/80 transition"
+                                    >
+                                        {post.replies_count === 0
+                                            ? "Be the first to comment!"
+                                            : `${post.replies_count} ${post.replies_count === 1 ? "reply" : "replies"} view`}
+                                    </button>
+
+                                    {expandedReplies[post.id] && (
+                                        <div className="space-y-4 mt-4 pt-4 border-t border-border">
+                                            {repliesData[post.id]?.map((reply) => {
+                                                const isTagged = loggedInHandle && reply.content.includes(`@${loggedInHandle}`);
+
+                                                return (
+                                                    <div key={reply.id} className={`group p-4 rounded-lg border-l-4 transition relative ${isTagged ? "bg-yellow-500/10 border-yellow-500" : "bg-secondary/50 border-border"}`}>
+                                                        <div className="absolute top-3 right-3 flex gap-2 sm:opacity-0 sm:group-hover:opacity-100 transition z-10">
+                                                            {canEditOrDelete(reply.author_id) && (
+                                                                <>
+                                                                    <button onClick={() => startEditing(reply)} className="text-muted-foreground hover:text-primary"><Edit2 className="w-3.5 h-3.5" /></button>
+                                                                    <button onClick={() => handleDelete(reply.id, post.id)} className="text-muted-foreground hover:text-destructive"><Trash2 className="w-3.5 h-3.5" /></button>
+                                                                </>
+                                                            )}
+                                                            {!canEditOrDelete(reply.author_id) && (
+                                                                <button onClick={() => openReportDialog(reply.id)} className="text-muted-foreground hover:text-orange-500"><Flag className="w-3.5 h-3.5" /></button>
+                                                            )}
+                                                        </div>
+
+                                                        <button onClick={() => navigate(`/user-details/${reply.author_id}`)} className="flex items-center gap-2 mb-2 hover:opacity-80 transition cursor-pointer">
+                                                            <Avatar className="w-8 h-8 ring-1 ring-border">
+                                                                <AvatarImage src={reply.avatar || undefined} alt={reply.username} />
+                                                                <AvatarFallback className="text-xs">{reply.username?.substring(0, 2).toUpperCase()}</AvatarFallback>
+                                                            </Avatar>
+                                                            <div className="flex flex-col items-start">
+                                                                <span className="font-semibold text-sm flex items-center gap-1 text-foreground">
+                                                                    {reply.username}
+                                                                    {reply.verified === 1 && (<BadgeCheckIcon className="size-3 fill-sky-500 stroke-background" />)}
+                                                                </span>
+                                                                <span className="text-xs text-muted-foreground">@{reply.handle}<span className="text-muted-foreground/50 mx-1">·</span>{formatDate(reply.created_at)}</span>
+                                                            </div>
+                                                        </button>
+
+                                                        {editingPostId === reply.id ? (
+                                                            <div className="space-y-2 mt-2 relative z-20">
+                                                                <Textarea value={editContent} onChange={(e) => setEditContent(e.target.value)} className="w-full text-sm" rows={2} />
+                                                                <div className="flex gap-2 justify-end">
+                                                                    <Button onClick={() => setEditingPostId(null)} variant="ghost" size="sm" className="h-7 text-xs">Cancel</Button>
+                                                                    <Button onClick={() => handleEditSave(reply.id, post.id)} size="sm" variant="default" className="h-7 text-xs">Save</Button>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">{reply.content}</p>
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+
+                                            {currentToken && (
+                                                <div className="flex flex-col gap-3 mt-4">
+                                                    <Textarea
+                                                        placeholder="Write a reply... (Mention users with @handle)"
+                                                        value={replyText[post.id] || ""}
+                                                        onChange={(e) => setReplyText({ ...replyText, [post.id]: e.target.value })}
+                                                        className="resize-none"
+                                                        rows={2}
+                                                    />
+                                                    <Button onClick={() => handleReplySubmit(post.id)} disabled={!replyText[post.id]?.trim()} variant="secondary" className="w-full sm:w-auto self-end cursor-pointer">
+                                                        <SendIcon className="w-4 h-4 mr-2" /> Send Reply
+                                                    </Button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+                            </CardContent>
+                        </Card>
+                    ))}
+
+                    {posts.length === 0 && (
+                        <div className="text-muted-foreground text-lg py-12 flex flex-col items-center gap-2">
+                            <ImageIcon className="w-12 h-12 text-muted-foreground/50" />
+                            There are no posts in this region yet.
+                        </div>
+                    )}
+                </div>
             </div>
 
             <Dialog open={reportDialogOpen} onOpenChange={setReportDialogOpen}>
                 <DialogContent className="sm:max-w-md">
                     <DialogHeader>
                         <DialogTitle className="flex items-center gap-2">
-                            <Flag className="w-5 h-5 text-orange-500" />
-                            Report Post
+                            <Flag className="w-5 h-5 text-orange-500" /> Report Post
                         </DialogTitle>
-                        <DialogDescription>
-                            Please select a reason for the report. Inappropriate reports may be ignored.
-                        </DialogDescription>
+                        <DialogDescription>Please select a reason for the report. Inappropriate reports may be ignored.</DialogDescription>
                     </DialogHeader>
 
                     {reportSuccess ? (
                         <div className="py-6 text-center">
                             <div className="text-green-500 text-4xl mb-3">✓</div>
-                            <p className="text-green-600 font-medium">The report has been submitted successfully!</p>
-                            <p className="text-gray-500 text-sm mt-1">Thank you for your help.</p>
+                            <p className="text-green-500 font-medium">The report has been submitted successfully!</p>
+                            <p className="text-muted-foreground text-sm mt-1">Thank you for your help.</p>
                         </div>
                     ) : (
                         <div className="space-y-4 py-4">
@@ -522,26 +502,14 @@ export default function Chatroom() {
                                         <SelectValue placeholder="Choose a reason..." />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {REPORT_REASONS.map((reason) => (
-                                            <SelectItem key={reason.value} value={reason.value}>
-                                                {reason.label}
-                                            </SelectItem>
-                                        ))}
+                                        {REPORT_REASONS.map((reason) => (<SelectItem key={reason.value} value={reason.value}>{reason.label}</SelectItem>))}
                                     </SelectContent>
                                 </Select>
                             </div>
-
                             {reportReason === "other" && (
                                 <div className="space-y-2">
                                     <Label htmlFor="custom-reason">Detailed Description</Label>
-                                    <Textarea
-                                        id="custom-reason"
-                                        placeholder="Please describe the issue in detail..."
-                                        value={reportCustomReason}
-                                        onChange={(e) => setReportCustomReason(e.target.value)}
-                                        rows={3}
-                                        className="resize-none"
-                                    />
+                                    <Textarea id="custom-reason" placeholder="Please describe..." value={reportCustomReason} onChange={(e) => setReportCustomReason(e.target.value)} rows={3} className="resize-none" />
                                 </div>
                             )}
                         </div>
@@ -549,16 +517,8 @@ export default function Chatroom() {
 
                     {!reportSuccess && (
                         <DialogFooter className="gap-2 sm:gap-0">
-                            <Button variant="ghost" onClick={() => setReportDialogOpen(false)} disabled={isReporting}>
-                                Cancel
-                            </Button>
-                            <Button 
-                                onClick={handleReportSubmit}
-                                disabled={!reportReason || (reportReason === "other" && !reportCustomReason.trim()) || isReporting}
-                                variant="destructive"
-                            >
-                                {isReporting ? "Submitting..." : "Submit Report"}
-                            </Button>
+                            <Button variant="ghost" onClick={() => setReportDialogOpen(false)} disabled={isReporting}>Cancel</Button>
+                            <Button onClick={handleReportSubmit} disabled={!reportReason || (reportReason === "other" && !reportCustomReason.trim()) || isReporting} variant="destructive">Submit Report</Button>
                         </DialogFooter>
                     )}
                 </DialogContent>

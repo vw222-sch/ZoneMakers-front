@@ -14,10 +14,10 @@ const TOPIC_LABELS: Record<number, string> = {
     4: "Other",
 };
 
-const STATE_LABELS: Record<number, { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
-    1: { label: "Open", variant: "default" },
-    2: { label: "In Progress", variant: "outline" },
-    3: { label: "Closed", variant: "secondary" },
+const STATE_LABELS: Record<number, { label: string; variant: "default" | "secondary" | "destructive" | "outline"; className: string }> = {
+    1: { label: "Open", variant: "default", className: "bg-destructive/20 text-destructive border-none" },
+    2: { label: "In Progress", variant: "outline", className: "border-yellow-500/30 text-yellow-500 bg-yellow-500/10" },
+    3: { label: "Closed", variant: "secondary", className: "bg-secondary text-secondary-foreground border-none" },
 };
 
 export default function AdminSupport() {
@@ -67,14 +67,14 @@ export default function AdminSupport() {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-64">
-                <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-xl">
                 Error loading tickets: {error}
             </div>
         );
@@ -83,18 +83,18 @@ export default function AdminSupport() {
     return (
         <div className="space-y-6">
             <div>
-                <h2 className="text-2xl font-bold tracking-tight">Support Tickets</h2>
+                <h2 className="text-2xl font-extrabold tracking-tight">Support Tickets</h2>
                 <p className="text-muted-foreground">Management of user reports and issues. ({tickets.length} tickets)</p>
             </div>
 
             {selectedTicket && (
-                <div className="border rounded-md bg-white shadow-sm p-6">
+                <div className="border border-border rounded-xl bg-card p-6">
                     <div className="flex items-start justify-between mb-4">
                         <div>
                             <h3 className="text-lg font-semibold">{selectedTicket.subject}</h3>
                             <div className="flex items-center gap-2 mt-1">
-                                <Badge variant="secondary">{TOPIC_LABELS[selectedTicket.topic] || `Topic ${selectedTicket.topic}`}</Badge>
-                                <Badge variant={STATE_LABELS[selectedTicket.state]?.variant || "secondary"}>
+                                <Badge variant="secondary" className="border-none">{TOPIC_LABELS[selectedTicket.topic] || `Topic ${selectedTicket.topic}`}</Badge>
+                                <Badge variant={STATE_LABELS[selectedTicket.state]?.variant || "secondary"} className={STATE_LABELS[selectedTicket.state]?.className || ""}>
                                     {STATE_LABELS[selectedTicket.state]?.label || `State ${selectedTicket.state}`}
                                 </Badge>
                             </div>
@@ -104,20 +104,20 @@ export default function AdminSupport() {
                         </Button>
                     </div>
                     <div className="space-y-3 text-sm">
-                        <p><strong>User ID:</strong> {selectedTicket.userid}</p>
-                        <p><strong>Created:</strong> {new Date(selectedTicket.timestamp).toLocaleString("hu-HU")}</p>
+                        <p className="text-muted-foreground"><strong className="text-foreground">User ID:</strong> {selectedTicket.userid}</p>
+                        <p className="text-muted-foreground"><strong className="text-foreground">Created:</strong> {new Date(selectedTicket.timestamp).toLocaleString("hu-HU")}</p>
                         <div>
-                            <strong>Description:</strong>
-                            <p className="mt-1 p-3 bg-gray-50 rounded-md whitespace-pre-wrap">{selectedTicket.description}</p>
+                            <strong className="text-foreground">Description:</strong>
+                            <p className="mt-1 p-3 bg-background rounded-xl border border-border whitespace-pre-wrap text-muted-foreground">{selectedTicket.description}</p>
                         </div>
                     </div>
                 </div>
             )}
 
-            <div className="border rounded-md bg-white shadow-sm">
+            <div className="border border-border rounded-xl bg-card overflow-hidden">
                 <Table>
                     <TableHeader>
-                        <TableRow>
+                        <TableRow className="hover:bg-transparent">
                             <TableHead className="w-20">ID</TableHead>
                             <TableHead>Topic</TableHead>
                             <TableHead>Subject</TableHead>
@@ -130,19 +130,19 @@ export default function AdminSupport() {
                     <TableBody>
                         {currentTickets.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={7} className="text-center h-24 text-gray-500">
+                                <TableCell colSpan={7} className="text-center h-24 text-muted-foreground">
                                     No support tickets found.
                                 </TableCell>
                             </TableRow>
                         ) : currentTickets.map((ticket) => (
-                            <TableRow key={ticket.id} className={selectedTicket?.id === ticket.id ? "bg-blue-50" : ""}>
+                            <TableRow key={ticket.id} className={`${selectedTicket?.id === ticket.id ? "bg-muted/50" : ""}`}>
                                 <TableCell className="font-medium">#{ticket.id}</TableCell>
-                                <TableCell>{TOPIC_LABELS[ticket.topic] || ticket.topic}</TableCell>
+                                <TableCell className="text-muted-foreground">{TOPIC_LABELS[ticket.topic] || ticket.topic}</TableCell>
                                 <TableCell className="max-w-50 truncate font-medium">{ticket.subject}</TableCell>
-                                <TableCell>{ticket.userid}</TableCell>
-                                <TableCell className="text-sm">{new Date(ticket.timestamp).toLocaleDateString("hu-HU")}</TableCell>
+                                <TableCell className="text-muted-foreground">{ticket.userid}</TableCell>
+                                <TableCell className="text-sm text-muted-foreground">{new Date(ticket.timestamp).toLocaleDateString("hu-HU")}</TableCell>
                                 <TableCell>
-                                    <Badge variant={STATE_LABELS[ticket.state]?.variant || "secondary"}>
+                                    <Badge variant={STATE_LABELS[ticket.state]?.variant || "secondary"} className={STATE_LABELS[ticket.state]?.className || ""}>
                                         {STATE_LABELS[ticket.state]?.label || ticket.state}
                                     </Badge>
                                 </TableCell>
@@ -180,7 +180,7 @@ export default function AdminSupport() {
                     >
                         <ChevronLeft className="w-4 h-4 mr-1" /> Previous
                     </Button>
-                    <div className="text-sm text-gray-600 font-medium px-2">
+                    <div className="text-sm text-muted-foreground font-medium px-2">
                         {currentPage} / {totalPages}. page
                     </div>
                     <Button 
