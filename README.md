@@ -4,6 +4,12 @@
 
 This document explains the frontend architecture for the ZoneMakers platform. The `ZoneMakers-front` app is a React/TypeScript client that connects UI interactions to a backend API.
 
+## Prerequisites
+
+- Node.js 22.x or higher
+- `pnpm` is the recommended package manager (project includes `pnpm-lock.yaml`)
+- If `pnpm` is not available, `npm` can be used as a fallback via `npx`
+
 The frontend provides:
 
 - zone discovery, search, and detail browsing
@@ -57,16 +63,19 @@ The UI follows these conventions:
 
 The application requires the following environment variables to be set in a `.env` file in the root directory:
 
+- `VITE_API_URL`: base URL for the backend API (defaults to `http://localhost:3000` when unset)
 - `VITE_MAPBOX_TOKEN`: Mapbox access token for map functionality
 - `VITE_WORLD_NEWS_API_KEY`: API key for world news integration
 
 Example `.env` file:
 ```
+VITE_API_URL=http://localhost:3000
 VITE_MAPBOX_TOKEN=your_mapbox_token_here
 VITE_WORLD_NEWS_API_KEY=your_news_api_key_here
 ```
 
-These variables are used for map rendering and news features respectively.
+These variables are used for backend API connectivity, map rendering, and news features.
+
 - admin workflows are protected and only dispatched through admin-specific endpoints
 - components consume typed service data rather than making raw API calls directly
 
@@ -210,4 +219,21 @@ pnpm install
 pnpm dev
 ```
 
+If `pnpm` is unavailable, you can use `npm` with `npx`:
+
+```bash
+npm install
+npx vite
+```
+
 Make sure `VITE_API_URL` points to the backend API before running locally.
+
+## Validation
+
+Use the following commands to verify the frontend build and tests:
+
+```bash
+npx tsc -b
+npx eslint . --ext .ts,.tsx
+npx vitest run
+```
