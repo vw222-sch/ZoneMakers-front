@@ -103,8 +103,8 @@ VITE_WORLD_NEWS_API_KEY=your_news_api_key_here
 - All external API tokens are managed securely in the deployment platform
 
 ## Test Profiles:
--**Admin** username: admin ; password: admin
--**User** username: teszt ; password: teszthash
+- **Admin** username: admin ; password: admin
+- **User** username: teszt ; password: teszthash
 
 ## User Interactions
 
