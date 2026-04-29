@@ -90,7 +90,7 @@ The application requires the following environment variables to be set in a `.en
 - `VITE_MAPBOX_TOKEN`: Mapbox access token for map functionality (required for Map page)
 - `VITE_WORLD_NEWS_API_KEY`: API key for world news integration (required for News page)
 
-**Example `.env` file:**
+**`.env` file:**
 ```
 VITE_API_URL=http://localhost:3000
 VITE_MAPBOX_TOKEN=your_mapbox_token_here
@@ -101,6 +101,10 @@ VITE_WORLD_NEWS_API_KEY=your_news_api_key_here
 - Environment variables are configured in Netlify's deployment settings
 - API requests are proxied to the backend service
 - All external API tokens are managed securely in the deployment platform
+
+## Test Profiles:
+-**Admin** username: admin ; password: admin
+-**User** username: teszt ; password: teszthash
 
 ## User Interactions
 
