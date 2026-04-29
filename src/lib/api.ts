@@ -3,7 +3,7 @@ import type { AxiosInstance, AxiosRequestConfig } from 'axios';
 import { getToken, logout } from './auth';
 import type { ApiError } from '@/types';
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const API_BASE = import.meta.env.VITE_API_URL || 'https://zonemakers.vw222.org/';
 
 // Creates configured axios instance with base URL and timeout
 const axiosInstance: AxiosInstance = axios.create({
