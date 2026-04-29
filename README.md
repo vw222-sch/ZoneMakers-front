@@ -13,6 +13,10 @@ The frontend provides:
 
 I designed this project as the presentation layer in a multi-service system: it handles routing, UI state, and HTTP communication while the backend owns persistence and authorization.
 
+## Related Documentation
+
+- [Backend API Documentation](../ZoneMakers-back/README.MD) - Details on the backend services and API endpoints
+
 ## Key Responsibilities
 
 This frontend is responsible for:
@@ -48,6 +52,21 @@ The UI follows these conventions:
 - route-based pages render different content based on authentication and role
 - loading and error states are managed locally in components when fetching data
 - form submissions go through service calls and then refresh UI state on success
+
+## Environment Variables
+
+The application requires the following environment variables to be set in a `.env` file in the root directory:
+
+- `VITE_MAPBOX_TOKEN`: Mapbox access token for map functionality
+- `VITE_WORLD_NEWS_API_KEY`: API key for world news integration
+
+Example `.env` file:
+```
+VITE_MAPBOX_TOKEN=your_mapbox_token_here
+VITE_WORLD_NEWS_API_KEY=your_news_api_key_here
+```
+
+These variables are used for map rendering and news features respectively.
 - admin workflows are protected and only dispatched through admin-specific endpoints
 - components consume typed service data rather than making raw API calls directly
 
