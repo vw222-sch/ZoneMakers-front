@@ -15,7 +15,7 @@ I designed this project as the presentation layer in a multi-service system: it 
 
 ## Related Documentation
 
-- [Backend API Documentation](../ZoneMakers-back/README.MD) - Details on the backend services and API endpoints
+- [Backend API Documentation](https://github.com/vw222-sch/ZoneMakers-back) - Details on the backend services and API endpoints
 
 ## Key Responsibilities
 
