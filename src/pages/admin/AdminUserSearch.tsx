@@ -186,7 +186,7 @@ export default function AdminUserSearch() {
             <form onSubmit={handleSearch} className="flex gap-3 max-w-xl">
                 <Input
                     type="text"
-                    placeholder="Enter user handle (e.g. johndoe)"
+                    placeholder="Enter user handle (e.g. username)"
                     value={searchHandle}
                     onChange={(e) => setsearchHandle(e.target.value)}
                     className="flex-1"

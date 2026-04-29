@@ -53,12 +53,12 @@ export default function Signup() {
           <FieldGroup className="gap-6">
             <Field>
               <FieldLabel htmlFor="username" className="text-base font-bold tracking-wide">Username</FieldLabel>
-              <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="johndoe" className="max-md:text-sm" required />
+              <Input id="username" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="username" className="max-md:text-sm" required />
             </Field>
             
             <Field>
               <FieldLabel htmlFor="email" className="text-base font-bold tracking-wide">E-mail</FieldLabel>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="johndoe@example.com" className="max-md:text-sm" required />
+              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email@example.com" className="max-md:text-sm" required />
             </Field>
             
             <Field>

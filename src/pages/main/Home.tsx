@@ -155,7 +155,7 @@ export default function Home() {
               </span>
             </h2>
             <p className="text-xl text-muted-foreground mb-8 leading-relaxed text-balance">
-              Stop worrying about "wrong turns". Our platform filters the noise so you can focus on the memories.
+              Join a community of travelers sharing real experiences. Verified reports from locals and tourists help build the most accurate safety map possible.
             </p>
 
             <div className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export default function Home() {
               Frequently Asked Questions
             </h2>
             <p className="fl-text-2xl/4xl leading-snug font-semibold tracking-wider text-muted-foreground text-balance">
-              Everything you need to know about the Black Zone map.
+              Everything you need to know about ZoneMakers.
             </p>
           </div>
 

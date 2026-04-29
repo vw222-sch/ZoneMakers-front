@@ -54,7 +54,7 @@ export default function Login() {
                 id="username"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="johndoe"
+                placeholder="username"
                 className="max-md:text-sm"
                 required
               />
