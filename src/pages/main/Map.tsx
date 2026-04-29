@@ -18,7 +18,6 @@ import { Sheet, SheetClose, SheetContent, SheetDescription, SheetFooter, SheetHe
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from '@/components/ui/textarea'
 
-// Átalakítva áttetsző/szemantikus színekre, hogy dark és light módban is jól mutassanak
 const HAZARD_STYLE: Record<string, { fillColor: string; bg: string; text: string }> = {
     Critical: { fillColor: 'rgba(220, 38, 38, 0.6)', bg: 'bg-red-500/20', text: 'text-red-500' },
     High: { fillColor: 'rgba(234, 88, 12, 0.6)', bg: 'bg-orange-500/20', text: 'text-orange-500' },
@@ -69,7 +68,6 @@ function SearchBar({ value, onChange, results, onSelect, isDrawing, onStartDrawi
                 type="text"
                 value={value}
                 onChange={e => onChange(e.target.value)}
-                /* Kőkeményen kikényszerítjük a világos stílust az Input-on is */
                 className={`p-4 h-auto transition-all duration-200 bg-white dark:bg-white text-black dark:text-black border-gray-300 dark:border-gray-300 placeholder:text-gray-500 shadow-2xl focus-visible:ring-gray-400 ${hasResults ? 'rounded-t-2xl rounded-b-none' : 'rounded-full'}`}
                 placeholder="Search between zones..."
             />
@@ -77,7 +75,6 @@ function SearchBar({ value, onChange, results, onSelect, isDrawing, onStartDrawi
             {hasResults && (
                 <div className="bg-white dark:bg-white rounded-b-2xl border-x border-b border-gray-300 dark:border-gray-300 shadow-lg max-h-64 overflow-y-auto">
                     {results.map((zone) => (
-                        /* Sima natív HTML button a shadcn <Button> helyett, így nincs téma-ütközés */
                         <button
                             key={zone.id}
                             type="button"
@@ -188,7 +185,7 @@ export default function Map() {
             const zones = await zoneService.fetchZoneSummaries();
             setZoneSummaries(zones);
         } catch (error) {
-            console.error("Hiba a zónák letöltésekor:", getErrorMessage(error));
+            console.error("Error loading zone summaries:", getErrorMessage(error));
         }
     }, []);
 
@@ -202,7 +199,7 @@ export default function Map() {
                 const zones = await zoneService.searchZones(debouncedSearch);
                 setSearchResults(zones);
             } catch (error) {
-                console.error("Keresési hiba:", getErrorMessage(error));
+                console.error("Search error:", getErrorMessage(error));
             }
         };
         searchZones();
@@ -221,7 +218,7 @@ export default function Map() {
                 setSelectedZone(fullZone);
             }
         } catch (error) {
-            console.error("Hiba a zóna részleteinek betöltésekor:", getErrorMessage(error));
+            console.error("Error loading zone details:", getErrorMessage(error));
             if (currentFetchId === fetchIdRef.current) {
                 setSelectedZoneId(null);
             }
@@ -311,7 +308,7 @@ export default function Map() {
             const mapInstance = mapboxMapRef.current;
             if (mapInstance && drawRef.current) mapInstance.removeControl(drawRef.current);
         } catch (e) {
-            console.warn("Hiba a Draw kontrol eltávolításakor:", e);
+            console.warn("Error removing Draw control:", e);
         }
         drawRef.current = null;
         dispatch({ type: 'RESET_DRAW' });
@@ -321,7 +318,7 @@ export default function Map() {
         if (!mapboxMapRef.current || isDrawingRef.current) return;
 
         if (!isLoggedIn) {
-            setStatusMsg('Hiba: Be kell jelentkezned a rajzoláshoz!');
+            setStatusMsg('Error: You must be logged in to draw.');
             setTimeout(() => setStatusMsg(null), 3000);
             return;
         }
@@ -368,12 +365,12 @@ export default function Map() {
 
             await zoneService.createZoneRequest(payload);
 
-            setStatusMsg('Zóna kérelem sikeresen elküldve!');
+            setStatusMsg('Zone request submitted successfully!');
             setTimeout(() => setStatusMsg(null), 3000);
             fetchZoneSummaries();
         } catch (err) {
             console.error(err);
-            setStatusMsg('Hiba a mentés során: ' + getErrorMessage(err));
+            setStatusMsg('Error while saving: ' + getErrorMessage(err));
         } finally {
             resetDraw();
         }
@@ -417,14 +414,14 @@ export default function Map() {
                                 <SheetTitle className="text-xl font-bold">{selectedZone.name}</SheetTitle>
                                 <SheetDescription>
                                     <span className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mt-2 ${getHazardStyle(selectedZone.hazard_level).bg} ${getHazardStyle(selectedZone.hazard_level).text}`}>
-                                        {selectedZone.hazard_level} veszély
+                                        {selectedZone.hazard_level} hazard level
                                     </span>
                                 </SheetDescription>
                             </SheetHeader>
                             <div className="p-6 space-y-6">
                                 <div>
-                                    <h3 className="font-semibold mb-2">Leírás</h3>
-                                    <p className="text-sm text-muted-foreground">{selectedZone.description || 'Nincs megadva leírás.'}</p>
+                                    <h3 className="font-semibold mb-2">Description</h3>
+                                    <p className="text-sm text-muted-foreground">{selectedZone.description || 'No description provided.'}</p>
                                 </div>
                                 <div>
                                     <h3 className="font-semibold mb-3">Identified hazards</h3>
@@ -531,7 +528,7 @@ export default function Map() {
                     </div>
                     <SheetFooter className="p-6 pt-0">
                         <SheetClose asChild>
-                            <Button type="button" variant="outline">Mégse</Button>
+                            <Button type="button" variant="outline">Cancel</Button>
                         </SheetClose>
                         <Button
                             type="button"
@@ -540,7 +537,7 @@ export default function Map() {
                             className="cursor-pointer font-bold"
                         >
                             <Save className="mr-2 h-4 w-4" />
-                            Mentés
+                            Save
                         </Button>
                     </SheetFooter>
                 </SheetContent>
