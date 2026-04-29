@@ -33,5 +33,9 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": ["src"],
+
+  "compilerOptions": {
+    "types": ["@testing-library/jest-dom"]
+  }
 }
